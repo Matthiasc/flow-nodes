@@ -3,7 +3,6 @@ export type Logger = {
   warn: (message: string) => void;
   error: (message: string) => void;
   getLog: () => LogEntry[];
-  getLogNiceOutput: () => string[];
   setMessageLog: (messageLog: LogEntry[]) => void;
 };
 
@@ -29,9 +28,11 @@ export const createLogger = (nodeName: string): Logger => {
     warn: (message) => addLog("warn", message),
     error: (message) => addLog("error", message),
     getLog: () => [..._nodeLog],
-    getLogNiceOutput: () =>
-      _nodeLog.map((log) => `${log.type}: ${log.nodeName} - ${log.message}`),
     // clearLog: () => log.length = 0,
     setMessageLog: (messageLog) => (_messageLog = messageLog),
   };
 };
+
+export function prettyPrint(log: LogEntry[]) {
+  return log.map((log) => `${log.type}: ${log.nodeName} - ${log.message}`);
+}

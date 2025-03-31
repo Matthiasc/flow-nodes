@@ -1,12 +1,13 @@
 import * as cheerio from "cheerio";
-import { createNode } from "../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../lib/create-node.ts";
 
 export const createHtmlSelectorNode = ({ name, selector }) => {
-  const process = async ({ msg, log, globals }) => {
+  const process: ProcessFn = async ({ msg, log, globals }) => {
     if (typeof msg.payload !== "string") {
       throw new Error("Input is not a string, unable to parse HTML.");
     }
 
+    //@ts-ignore
     const _selector = selector || msg.selector;
 
     try {
@@ -14,10 +15,13 @@ export const createHtmlSelectorNode = ({ name, selector }) => {
       const elements = $(_selector)
         .map((i, el) => $(el).text().trim())
         .get();
+
       if (!elements) {
         msg.payload = null;
         return msg; // If no element found, return empty string
       }
+
+      log.info(`Selected ${elements.length} elements`);
       msg.payload = elements;
 
       return msg;

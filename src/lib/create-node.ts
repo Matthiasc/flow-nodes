@@ -1,21 +1,23 @@
-import { createGlobals } from "./create-globals.ts";
+import { createGlobals, type Globals } from "./create-globals.ts";
 import { createLogger, type LogEntry, type Logger } from "./create-logger.ts";
 
 export type Node = any;
 export type Msg = { payload?: any; log?: LogEntry[] };
 
+export type ProcessFn = ({
+  msg,
+  log,
+  globals,
+}: {
+  msg: Msg;
+  log: Logger;
+  globals: Globals;
+}) => Promise<Msg | Msg[] | null> | null;
+
 type CreateNode = {
   type: string;
   name: string;
-  process: ({
-    msg,
-    log,
-    globals,
-  }: {
-    msg: Msg;
-    log: Logger;
-    globals: any;
-  }) => Msg | null;
+  process: ProcessFn;
   onProcessed?: ({ msg }: { msg: Msg }) => void;
 };
 
