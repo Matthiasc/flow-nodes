@@ -4,26 +4,34 @@ export type Logger = {
   error: (message: string) => void;
   getLog: () => LogEntry[];
   getLogNiceOutput: () => string[];
+  setMessageLog: (messageLog: LogEntry[]) => void;
 };
 
+export type LogLevel = "info" | "warn" | "error";
+
 export type LogEntry = {
-  type: "info" | "warn" | "error";
+  type: LogLevel;
   nodeName: string;
   message: string;
 };
 
 export const createLogger = (nodeName: string): Logger => {
-  const log: LogEntry[] = [];
+  const _nodeLog: LogEntry[] = [];
+  let _messageLog: LogEntry[] = [];
+
+  function addLog(type: LogLevel, message: string) {
+    _nodeLog.push({ type, nodeName, message });
+    _messageLog && _messageLog.push({ type, nodeName, message });
+  }
 
   return {
-    info: (message) => log.push({ type: "info", nodeName, message }),
-    warn: (message) => {
-      log.push({ type: "warn", nodeName, message });
-    },
-    error: (message) => log.push({ type: "error", nodeName, message }),
-    getLog: () => [...log],
+    info: (message) => addLog("info", message),
+    warn: (message) => addLog("warn", message),
+    error: (message) => addLog("error", message),
+    getLog: () => [..._nodeLog],
     getLogNiceOutput: () =>
-      log.map((log) => `${log.type}: ${log.nodeName} - ${log.message}`),
+      _nodeLog.map((log) => `${log.type}: ${log.nodeName} - ${log.message}`),
     // clearLog: () => log.length = 0,
+    setMessageLog: (messageLog) => (_messageLog = messageLog),
   };
 };

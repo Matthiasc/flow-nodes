@@ -10,7 +10,6 @@ export const createRandomNumberNode = ({
 
     const r = range[1] - range[0];
     const randomNumber = Math.random() * r + range[0];
-    console.log("rn", randomNumber);
 
     msg.payload = randomNumber;
 
@@ -59,7 +58,7 @@ export const createRateLimitingNode = ({
       calls++;
       return msg;
     } else {
-      log.warn("Rate limit exceeded, dropping message");
+      log.info("Rate limit exceeded, dropping message");
       return null;
     }
   };

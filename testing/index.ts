@@ -12,6 +12,7 @@ import {
 } from "../src/nodes/nodes.ts";
 import { createPassThroughNode } from "../src/nodes/flow/create-passthrough-node.ts";
 import { createHtmlSelectorNode } from "../src/nodes/create-html-selector-node.ts";
+import { createBatchNode } from "../src/nodes/flow/create-batch-node.ts";
 
 /**
  * create the nodes
@@ -61,12 +62,18 @@ const nRateLimitingNode = createRateLimitingNode({
   interval: 1000,
 });
 
+const nBatchNode = createBatchNode({ name: "batchNode1", numberOfMessages: 5 });
+
 /**
  * links the nodes, make the flow
  */
 // nFetch.to(nHtmlSelector).to([nDebugger, nDebugger2]);
-nHtmlRequest.to(nHtmlSelector).to(nSelectRandomFromArray).to(nDebugger);
-// nRateLimitingNode.to(nHtmlRequest);
+nHtmlRequest
+  .to(nHtmlSelector)
+  .to(nSelectRandomFromArray)
+  .to(nBatchNode)
+  .to(nDebugger);
+nRateLimitingNode.to(nHtmlRequest);
 
 // nRandomNumber.to(nDebugger);
 
@@ -76,11 +83,13 @@ nRandomNumber1.to(nDebugger);
 
 // /*
 setInterval(() => {
-  // nRateLimitingNode.process();
+  // nHtmlRequest.process({ msg: {} });
+  nRateLimitingNode.process({ msg: {} });
   // console.log(nFetch.nodeTree());
-}, 2000);
+}, 100);
 //*/
-nPassThrough.process({ msg: {} });
+// nPassThrough.process({ msg: {} });
+// nHtmlRequest.process({ msg: {} });
 /**
  * start the flow
  */
