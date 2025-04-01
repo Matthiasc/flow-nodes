@@ -9,6 +9,7 @@ export type Logger = {
 export type LogLevel = "info" | "warn" | "error";
 
 export type LogEntry = {
+  time: string;
   type: LogLevel;
   nodeName: string;
   message: string;
@@ -19,8 +20,9 @@ export const createLogger = (nodeName: string): Logger => {
   let _messageLog: LogEntry[] = [];
 
   function addLog(type: LogLevel, message: string) {
-    _nodeLog.push({ type, nodeName, message });
-    _messageLog && _messageLog.push({ type, nodeName, message });
+    const time = new Date().toISOString();
+    _nodeLog.push({ time, type, nodeName, message });
+    _messageLog && _messageLog.push({ time, type, nodeName, message });
   }
 
   return {
@@ -34,5 +36,7 @@ export const createLogger = (nodeName: string): Logger => {
 };
 
 export function prettyPrint(log: LogEntry[]) {
-  return log.map((log) => `${log.type}: ${log.nodeName} - ${log.message}`);
+  return log.map(
+    (log) => `${log.time} ${log.type}: ${log.nodeName} - ${log.message}`
+  );
 }

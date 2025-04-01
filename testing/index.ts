@@ -13,6 +13,8 @@ import {
 import { createPassThroughNode } from "../src/nodes/flow/create-passthrough-node.ts";
 import { createHtmlSelectorNode } from "../src/nodes/create-html-selector-node.ts";
 import { createBatchNode } from "../src/nodes/flow/create-batch-node.ts";
+import { createTemplateNode } from "../src/nodes/create-template-node.ts";
+import { createWriteToFileNode } from "../src/nodes/create-write-to-file-node.ts";
 
 /**
  * create the nodes
@@ -64,6 +66,17 @@ const nRateLimitingNode = createRateLimitingNode({
 
 const nBatchNode = createBatchNode({ name: "batchNode1", numberOfMessages: 5 });
 
+const nTemplateNode = createTemplateNode({
+  name: "templateNode1",
+  template: `<h1>test template<h1/>
+            <p><%= msg.payload %></p>`,
+});
+
+const nWriteToFile = createWriteToFileNode({
+  name: "writeToFileNode1",
+  filePath: "./test.txt",
+});
+
 /**
  * links the nodes, make the flow
  */
@@ -71,7 +84,9 @@ const nBatchNode = createBatchNode({ name: "batchNode1", numberOfMessages: 5 });
 nHtmlRequest
   .to(nHtmlSelector)
   .to(nSelectRandomFromArray)
-  .to(nBatchNode)
+  .to(nTemplateNode)
+  // .to(nBatchNode)
+  .to(nWriteToFile)
   .to(nDebugger);
 nRateLimitingNode.to(nHtmlRequest);
 
@@ -81,6 +96,7 @@ nPassThrough.to([nRandomNumber1, nRandomNumber2]);
 nRandomNumber2.to(nDebugger);
 nRandomNumber1.to(nDebugger);
 
+nRateLimitingNode.process({ msg: {} });
 // /*
 setInterval(() => {
   // nHtmlRequest.process({ msg: {} });

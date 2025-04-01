@@ -21,7 +21,7 @@ export const createBatchNode = ({ name, numberOfMessages = 5 }) => {
       return null;
     }
 
-    log.info(`sending ${messages.length} batchedmessages`);
+    log.info(`${messages.length} batched messages`);
     const result = [...messages];
     messages.length = 0;
     return result;
