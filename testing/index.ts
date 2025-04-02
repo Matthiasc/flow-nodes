@@ -15,6 +15,7 @@ import { createHtmlSelectorNode } from "../src/nodes/create-html-selector-node.t
 import { createBatchNode } from "../src/nodes/flow/create-batch-node.ts";
 import { createTemplateNode } from "../src/nodes/create-template-node.ts";
 import { createWriteToFileNode } from "../src/nodes/create-write-to-file-node.ts";
+import { createWatchFileNode } from "../src/nodes/storage/create-watch-file-node.ts";
 
 /**
  * create the nodes
@@ -77,6 +78,11 @@ const nWriteToFile = createWriteToFileNode({
   filePath: "./test.txt",
 });
 
+const nWatchFile = createWatchFileNode({
+  name: "watchFileNode1",
+  filePath: "./test.txt",
+});
+
 /**
  * links the nodes, make the flow
  */
@@ -86,9 +92,11 @@ nHtmlRequest
   .to(nSelectRandomFromArray)
   .to(nTemplateNode)
   // .to(nBatchNode)
-  .to(nWriteToFile)
-  .to(nDebugger);
+  .to(nWriteToFile);
+// .to(nDebugger);
 nRateLimitingNode.to(nHtmlRequest);
+
+// nWatchFile.to(nDebugger);
 
 // nRandomNumber.to(nDebugger);
 

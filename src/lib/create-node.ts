@@ -2,7 +2,7 @@ import { createGlobals, type Globals } from "./create-globals.ts";
 import { createLogger, type LogEntry, type Logger } from "./create-logger.ts";
 
 export type Node = any;
-export type Msg = { payload?: any; log?: LogEntry[] };
+export type Msg = { payload?: any; log?: LogEntry[]; [key: string]: any };
 
 export type ProcessFn = ({
   msg,
@@ -112,5 +112,6 @@ export const createNode = ({
     children: () => [...connectedTo],
     nodeTree,
     process: processConnected,
+    log: nodeLog,
   };
 };
