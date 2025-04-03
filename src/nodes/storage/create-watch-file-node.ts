@@ -1,6 +1,7 @@
 import { createNode } from "../../lib/create-node.ts";
-import { watch } from "fs";
-import { readFile } from "fs/promises";
+import chokidar from "chokidar";
+import { stat } from "fs/promises";
+import path from "path";
 
 export const createWatchFileNode = ({ name, filePath }) => {
   if (!filePath) throw new Error("filePath is required");
@@ -8,25 +9,49 @@ export const createWatchFileNode = ({ name, filePath }) => {
   const n = createNode({
     type: "watchFileNode",
     name,
-    process: async ({ msg, log, globals }) => msg,
+    process: async ({ msg, log, globals }) => msg, //just pass the message through
   });
 
-  try {
-    watch(filePath, async (eventType, filename) => {
-      if (!filename) {
-        n.log.warn("Filename not provided in event");
+  const watcher = chokidar.watch(filePath, {
+    persistent: true,
+    ignoreInitial: true,
+    // awaitWriteFinish: {
+    //   stabilityThreshold: 1000,
+    //   pollInterval: 100,
+    // },
+  });
+
+  watcher
+    .on("all", async (eventType, fileName) => {
+      if (!fileName) {
+        n.log.warn("fileName not provided in event");
         return;
       }
 
-      console.log(filename, eventType);
+      try {
+        const fileSize = await stat(filePath);
 
-      console.log(`${filePath + " " + filename} file changed (${eventType})`);
-      // n.log.info(`${filePath + " " + filename} file changed (${eventType})`);
-      n.process({ msg: { payload: filePath, filename } });
+        n.process({
+          msg: {
+            payload: filePath,
+            fileName,
+            filePath,
+            fileSize,
+            eventType,
+          },
+        });
+      } catch (error) {
+        n.log.error(`Error handling file change: ${error}`);
+      }
+    })
+    .on("error", (error) => {
+      n.log.error(`Watcher error: ${error}`);
     });
-  } catch (error) {
-    throw new Error(`Error watching file: ${error}`);
-  }
+
+  // n.onDestroy = () => {
+  //   watcher.close();
+  //   n.log.info("Stopped watching file");
+  // };
 
   return n;
 };

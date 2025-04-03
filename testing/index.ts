@@ -14,8 +14,9 @@ import { createPassThroughNode } from "../src/nodes/flow/create-passthrough-node
 import { createHtmlSelectorNode } from "../src/nodes/create-html-selector-node.ts";
 import { createBatchNode } from "../src/nodes/flow/create-batch-node.ts";
 import { createTemplateNode } from "../src/nodes/create-template-node.ts";
-import { createWriteToFileNode } from "../src/nodes/create-write-to-file-node.ts";
+import { createWriteToFileNode } from "../src/nodes/storage/create-write-to-file-node.ts";
 import { createWatchFileNode } from "../src/nodes/storage/create-watch-file-node.ts";
+import { createReadFileNode } from "../src/nodes/storage/create-read-file-node.ts";
 
 /**
  * create the nodes
@@ -62,7 +63,7 @@ const nSelectRandomFromArray = createFunctionNode({
 const nRateLimitingNode = createRateLimitingNode({
   name: "rateLimitingNode",
   limit: 1,
-  interval: 1000,
+  interval: 2000,
 });
 
 const nBatchNode = createBatchNode({ name: "batchNode1", numberOfMessages: 5 });
@@ -83,6 +84,11 @@ const nWatchFile = createWatchFileNode({
   filePath: "./test.txt",
 });
 
+const nReadFile = createReadFileNode({
+  name: "readFileNode1",
+  filePath: "./test.txt",
+});
+
 /**
  * links the nodes, make the flow
  */
@@ -96,7 +102,7 @@ nHtmlRequest
 // .to(nDebugger);
 nRateLimitingNode.to(nHtmlRequest);
 
-// nWatchFile.to(nDebugger);
+nWatchFile.to(nReadFile).to(nDebugger);
 
 // nRandomNumber.to(nDebugger);
 
@@ -110,7 +116,7 @@ setInterval(() => {
   // nHtmlRequest.process({ msg: {} });
   nRateLimitingNode.process({ msg: {} });
   // console.log(nFetch.nodeTree());
-}, 100);
+}, 4000);
 //*/
 // nPassThrough.process({ msg: {} });
 // nHtmlRequest.process({ msg: {} });

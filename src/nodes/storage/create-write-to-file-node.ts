@@ -1,4 +1,4 @@
-import { createNode } from "../lib/create-node.ts";
+import { createNode } from "../../lib/create-node.ts";
 import { promises as fs } from "fs";
 import path from "path";
 
