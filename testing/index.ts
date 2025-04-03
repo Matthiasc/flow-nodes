@@ -1,15 +1,12 @@
 /**
  * run with `node --watch src/4/index.ts`
  */
+import "dotenv/config";
 
 import { createHttpRequestNode } from "../src/nodes/create-http-request.ts";
 import { createDebuggerNode } from "../src/nodes/create-debugger-node.ts";
 import { createDelayNode } from "../src/nodes/flow/create-delay-node.ts";
-import {
-  createRandomNumberNode,
-  createFunctionNode,
-  createRateLimitingNode,
-} from "../src/nodes/nodes.ts";
+import { createRandomNumberNode } from "../src/nodes/create-random-number-node.ts";
 import { createPassThroughNode } from "../src/nodes/flow/create-passthrough-node.ts";
 import { createHtmlSelectorNode } from "../src/nodes/create-html-selector-node.ts";
 import { createBatchNode } from "../src/nodes/flow/create-batch-node.ts";
@@ -17,6 +14,9 @@ import { createTemplateNode } from "../src/nodes/create-template-node.ts";
 import { createWriteToFileNode } from "../src/nodes/storage/create-write-to-file-node.ts";
 import { createWatchFileNode } from "../src/nodes/storage/create-watch-file-node.ts";
 import { createReadFileNode } from "../src/nodes/storage/create-read-file-node.ts";
+import { createRateLimitingNode } from "../src/nodes/flow/create-rate-limiting-node.ts";
+import { createFunctionNode } from "../src/nodes/create-function-node.ts";
+import { createSendSimpleMailNode } from "../src/nodes/create-send-simple-mail-node.ts";
 
 /**
  * create the nodes
@@ -52,7 +52,7 @@ const nPassThrough = createPassThroughNode({ name: "passThroughNode1" });
 
 const nSelectRandomFromArray = createFunctionNode({
   name: "selectRandomFromArray",
-  func: async (msg) => {
+  func: async ({ msg }) => {
     if (!Array.isArray(msg.payload)) throw new Error("Input is not an array");
     const array = msg.payload;
     const index = Math.floor(Math.random() * array.length);
@@ -89,6 +89,23 @@ const nReadFile = createReadFileNode({
   filePath: "./test.txt",
 });
 
+const nSendMail = createSendSimpleMailNode({
+  name: "sendMail",
+  smtpConfig: {
+    service: "gmail",
+    auth: {
+      user: process.env.GOOGLE_ACCOUNT_USERNAME,
+      pass: process.env.GOOGLE_APP_PASSWORD,
+    },
+  },
+  mailOptions: {
+    from: "matthias.crommelinck+1@gmail.com",
+    to: "matthias.crommelinck@gmail.com",
+    subject: "Test email",
+    messageType: "html",
+  },
+});
+
 /**
  * links the nodes, make the flow
  */
@@ -97,9 +114,10 @@ nHtmlRequest
   .to(nHtmlSelector)
   .to(nSelectRandomFromArray)
   .to(nTemplateNode)
-  // .to(nBatchNode)
-  .to(nWriteToFile);
-// .to(nDebugger);
+  .to([nSendMail, nDebugger]);
+// .to(nBatchNode)
+//   .to(nWriteToFile);
+// // .to(nDebugger);
 nRateLimitingNode.to(nHtmlRequest);
 
 nWatchFile.to(nReadFile).to(nDebugger);
@@ -114,7 +132,7 @@ nRateLimitingNode.process({ msg: {} });
 // /*
 setInterval(() => {
   // nHtmlRequest.process({ msg: {} });
-  nRateLimitingNode.process({ msg: {} });
+  // nRateLimitingNode.process({ msg: {} });
   // console.log(nFetch.nodeTree());
 }, 4000);
 //*/
