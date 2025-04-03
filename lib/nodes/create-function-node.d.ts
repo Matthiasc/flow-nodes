@@ -1,9 +1,8 @@
-import { N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
+import { P as ProcessFn, N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
 
-declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
+declare const createFunctionNode: ({ name, func, }: {
     name: string;
-    url?: string;
-    onProcessed?: (msg: any) => any;
+    func: ProcessFn;
 }) => {
     name: string;
     type: string;
@@ -20,4 +19,4 @@ declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
     log: Logger;
 };
 
-export { createHttpRequestNode };
+export { createFunctionNode };

@@ -1,9 +1,18 @@
 import { N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
 
-declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
+type MailOptions = {
+    from?: string;
+    to?: string | string[];
+    cc?: string | string[];
+    bcc?: string | string[];
+    subject?: string;
+    messageType?: "text" | "html";
+    message?: string;
+};
+declare const createSendSimpleMailNode: ({ name, smtpConfig, mailOptions, }: {
     name: string;
-    url?: string;
-    onProcessed?: (msg: any) => any;
+    smtpConfig: any;
+    mailOptions?: MailOptions;
 }) => {
     name: string;
     type: string;
@@ -20,4 +29,4 @@ declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
     log: Logger;
 };
 
-export { createHttpRequestNode };
+export { createSendSimpleMailNode };

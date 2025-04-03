@@ -1,4 +1,4 @@
-import { L as Logger } from '../create-logger-CYNC0QVN.js';
+import { N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
 
 declare const createHtmlSelectorNode: ({ name, selector }: {
     name: any;
@@ -6,17 +6,17 @@ declare const createHtmlSelectorNode: ({ name, selector }: {
 }) => {
     name: string;
     type: string;
-    to: (node: any) => any;
+    to: (node: Node) => any;
     children: () => any[];
     nodeTree: () => {
-        node: any;
-        children?: any[];
+        node: Node;
+        children?: Node[];
     }[];
-    process: ({ msg, log, globals, }: {
-        msg: {};
-        log?: Logger;
+    process: ({ msg, globals, }: {
+        msg: Msg;
         globals?: any;
     }) => Promise<void>;
+    log: Logger;
 };
 
 export { createHtmlSelectorNode };

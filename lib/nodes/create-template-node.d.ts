@@ -1,9 +1,8 @@
 import { N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
 
-declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
+declare const createTemplateNode: ({ name, template, }: {
     name: string;
-    url?: string;
-    onProcessed?: (msg: any) => any;
+    template: string;
 }) => {
     name: string;
     type: string;
@@ -20,4 +19,4 @@ declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
     log: Logger;
 };
 
-export { createHttpRequestNode };
+export { createTemplateNode };

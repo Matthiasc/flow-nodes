@@ -1,9 +1,9 @@
 import { N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
 
-declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
-    name: string;
-    url?: string;
-    onProcessed?: (msg: any) => any;
+declare const createRandomNumberNode: ({ name, wholeNumber, range, }: {
+    name: any;
+    wholeNumber?: boolean;
+    range?: number[];
 }) => {
     name: string;
     type: string;
@@ -20,4 +20,4 @@ declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
     log: Logger;
 };
 
-export { createHttpRequestNode };
+export { createRandomNumberNode };
