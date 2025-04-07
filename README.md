@@ -17,30 +17,41 @@ const nFetch = createHttpRequestNode({
   name: "fetchNode1",
   url: "https://example.com",
 });
+
 const nHtmlSelector = createHtmlSelectorNode({
   name: "selectorNode1",
   selector: "h2",
 });
+
 const nDebugger = createDebuggerNode({ name: "debuggerNode1" });
 
 // connect the nodes
 
 nFetch.to(nHtmlSelector).to(nDebugger);
+
+//start the flow
+nFetch.process({ msg: {} });
 ```
 
 ## connecting nodes
 
 ```js
-// you can connect one node to multiple nodes
-node1.to([node2, node3]);
+// you can connect one node to another
+node1.to(node2).to(node3);
 
-// you can connect multiple nodes to one node
+// you can connect one node to multiple nodes
 node1.to(node2);
 node1.to(node3);
 
-// connect node in a loop
-// (be careful, incorporate flow altering / limiting nodes)
+//or shorter
+node1.to([node2, node3]);
 
+// you can connect multiple nodes to one node
+node1.to(node3);
+node2.to(node3);
+
+// connect nodes in a loop
+// (be careful for infinite loops, incorporate flow altering / limiting nodes)
 node1.to(node2);
 node2.to(node3);
 node3.to(node1);
