@@ -34,7 +34,7 @@ export const createSendSimpleMailNode = ({
     const messageType =
       msg.email?.messageType || mailOptions?.messageType || "text";
 
-    const message = msg.email?.messsage || msg.payload || mailOptions?.message;
+    const message = msg.email?.message || msg.payload || mailOptions?.message;
 
     const mo = {
       from: msg.email?.from || mailOptions?.from,

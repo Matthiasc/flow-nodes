@@ -1,24 +1,5 @@
-declare const createGlobals: () => Globals;
-type Globals = {
-    set: (key: string, value: any) => void;
-    get: (key: string) => any;
-};
-
-type Logger = {
-    info: (message: string) => void;
-    warn: (message: string) => void;
-    error: (message: string) => void;
-    getLog: () => LogEntry[];
-    setMessageLog: (messageLog: LogEntry[]) => void;
-};
-type LogLevel = "info" | "warn" | "error";
-type LogEntry = {
-    time: string;
-    type: LogLevel;
-    nodeName: string;
-    message: string;
-};
-declare const createLogger: (nodeName: string) => Logger;
+import { Globals } from './create-globals.js';
+import { LogEntry, Logger } from './create-logger.js';
 
 type Node = any;
 type Msg = {
@@ -55,4 +36,4 @@ declare const createNode: ({ type, name, process: processFn, onProcessed, }: Cre
     log: Logger;
 };
 
-export { type Logger as L, type Msg as M, type Node as N, type ProcessFn as P, createLogger as a, createGlobals as b, createNode as c };
+export { type Msg, type Node, type ProcessFn, createNode };

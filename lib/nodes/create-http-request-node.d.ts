@@ -1,4 +1,6 @@
-import { N as Node, M as Msg, L as Logger } from '../create-node-BNJMA075.js';
+import { Logger } from '../lib/create-logger.js';
+import { Node, Msg } from '../lib/create-node.js';
+import '../lib/create-globals.js';
 
 declare const createHttpRequestNode: ({ name, url, onProcessed, }: {
     name: string;
