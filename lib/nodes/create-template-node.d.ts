@@ -1,4 +1,4 @@
-import { N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
+import { N as Node, M as Msg, L as Logger } from '../create-node-BNJMA075.js';
 
 declare const createTemplateNode: ({ name, template, }: {
     name: string;

@@ -1,4 +1,4 @@
-import { P as ProcessFn, N as Node, M as Msg, L as Logger } from '../create-node-4Dq8xNOT.js';
+import { P as ProcessFn, N as Node, M as Msg, L as Logger } from '../create-node-BNJMA075.js';
 
 declare const createFunctionNode: ({ name, func, }: {
     name: string;

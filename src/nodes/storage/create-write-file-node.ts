@@ -2,7 +2,7 @@ import { createNode } from "../../lib/create-node.ts";
 import { promises as fs } from "fs";
 import path from "path";
 
-export const createWriteToFileNode = ({
+export const createWriteFileNode = ({
   name,
   filePath,
   createDir = true,
