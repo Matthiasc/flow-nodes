@@ -1,4 +1,4 @@
-import { createNode } from "../../lib/create-node.ts";
+import { createNode } from "../../lib/create-node.js";
 
 export const createDelayNode = ({ name, delay = 1000 }) => {
   const process = async ({ msg, log, globals }) => {

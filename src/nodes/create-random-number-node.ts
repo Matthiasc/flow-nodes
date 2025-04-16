@@ -1,4 +1,4 @@
-import { createNode } from "../lib/create-node.ts";
+import { createNode } from "../lib/create-node.js";
 
 export const createRandomNumberNode = ({
   name,

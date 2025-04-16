@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../lib/create-node.js";
 
 export const createHtmlSelectorNode = ({ name, selector }) => {
   const process: ProcessFn = async ({ msg, log, globals }) => {

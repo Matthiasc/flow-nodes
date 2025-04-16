@@ -1,6 +1,6 @@
-import { type Globals } from "../../lib/create-globals.ts";
-import { type Logger } from "../../lib/create-logger.ts";
-import { createNode, type Msg } from "../../lib/create-node.ts";
+import { type Globals } from "../../lib/create-globals.js";
+import { type Logger } from "../../lib/create-logger.js";
+import { createNode, type Msg } from "../../lib/create-node.js";
 
 export const createBatchNode = ({ name, numberOfMessages = 5 }) => {
   const messages: Msg[] = [];

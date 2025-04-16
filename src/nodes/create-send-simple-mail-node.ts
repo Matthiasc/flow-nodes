@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../lib/create-node.js";
 
 type MailOptions = {
   from?: string;

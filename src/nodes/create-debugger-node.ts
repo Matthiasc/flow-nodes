@@ -1,5 +1,5 @@
-import { prettyPrint } from "../lib/create-logger.ts";
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { prettyPrint } from "../lib/create-logger.js";
+import { createNode, type ProcessFn } from "../lib/create-node.js";
 
 export const createDebuggerNode = ({ name }) => {
   const process: ProcessFn = async ({ msg, log, globals }) => {
