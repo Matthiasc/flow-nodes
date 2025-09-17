@@ -17,6 +17,7 @@ import { createReadFileNode } from "../src/nodes/storage/create-read-file-node.t
 import { createRateLimitingNode } from "../src/nodes/flow/create-rate-limiting-node.ts";
 import { createFunctionNode } from "../src/nodes/create-function-node.ts";
 import { createSendSimpleMailNode } from "../src/nodes/create-send-simple-mail-node.ts";
+import { createCronNode } from "../src/nodes/create-cron-node.ts";
 
 /**
  * create the nodes
@@ -62,7 +63,7 @@ const nSelectRandomFromArray = createFunctionNode({
 
 const nRateLimitingNode = createRateLimitingNode({
   name: "rateLimitingNode",
-  limit: 1,
+  limit: 2,
   interval: 2000,
 });
 
@@ -106,6 +107,14 @@ const nSendMail = createSendSimpleMailNode({
   },
 });
 
+const nCron = createCronNode({
+  name: "cronNode1",
+  cronTime: "* * * * *",
+});
+
+// nCron.to(nRandomNumber1).to(nDebugger);
+
+
 /**
  * links the nodes, make the flow
  */
@@ -114,19 +123,22 @@ nHtmlRequest
   .to(nHtmlSelector)
   .to(nSelectRandomFromArray)
   .to(nTemplateNode)
-  .to([nSendMail, nDebugger]);
+  .to([nSendMail, nDebugger])
+// .to()
 // .to(nBatchNode)
 //   .to(nWriteToFile);
 // // .to(nDebugger);
 nRateLimitingNode.to(nHtmlRequest);
 
-nWatchFile.to(nReadFile).to(nDebugger);
+// nWatchFile.to(nReadFile).to(nDebugger);
 
 // nRandomNumber.to(nDebugger);
 
-nPassThrough.to([nRandomNumber1, nRandomNumber2]);
-nRandomNumber2.to(nDebugger);
-nRandomNumber1.to(nDebugger);
+// nPassThrough.to([nRandomNumber1, nRandomNumber2]);
+// nRandomNumber2.to(nDebugger);
+// nRandomNumber1.to(nDebugger);
+
+// nPassThrough.process({ msg: {} });
 
 nRateLimitingNode.process({ msg: {} });
 // /*

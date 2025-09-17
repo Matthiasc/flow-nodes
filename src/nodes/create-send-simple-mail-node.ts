@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { createNode, type ProcessFn } from "../lib/create-node.js";
+import { createNode, type ProcessFn } from "../lib/create-node.ts";
 
 type MailOptions = {
   from?: string;
@@ -60,7 +60,7 @@ export const createSendSimpleMailNode = ({
         response: info.response,
       };
       return msg;
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`Error sending email: ${error.message}`);
     }
   };

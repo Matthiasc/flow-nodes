@@ -1,7 +1,7 @@
 import * as cheerio from "cheerio";
-import { createNode, type ProcessFn } from "../lib/create-node.js";
+import { createNode, type ProcessFn } from "../lib/create-node.ts";
 
-export const createHtmlSelectorNode = ({ name, selector }) => {
+export const createHtmlSelectorNode = ({ name, selector }: { name: string, selector: string }) => {
   const process: ProcessFn = async ({ msg, log, globals }) => {
     if (typeof msg.payload !== "string") {
       throw new Error("Input is not a string, unable to parse HTML.");

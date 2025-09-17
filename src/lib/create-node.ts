@@ -1,8 +1,8 @@
-import { createGlobals, type Globals } from "./create-globals.js";
-import { createLogger, type LogEntry, type Logger } from "./create-logger.js";
+import { createGlobals, type Globals } from "./create-globals.ts";
+import { createLogger, type LogEntry, type Logger } from "./create-logger.ts";
 
 export type Node = any;
-export type Msg = { payload?: any; log?: LogEntry[]; [key: string]: any };
+export type Msg = { payload?: any; log?: LogEntry[];[key: string]: any };
 
 export type ProcessFn = ({
   msg,

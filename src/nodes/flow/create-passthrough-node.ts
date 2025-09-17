@@ -1,8 +1,8 @@
-import { createNode } from "../../lib/create-node.js";
+import { createNode, ProcessFn } from "../../lib/create-node.ts";
 
-export const createPassThroughNode = ({ name }) => {
+export const createPassThroughNode = ({ name }: { name: string }) => {
   let count = 0;
-  const process = async ({ msg, log, globals }) => {
+  const process: ProcessFn = async ({ msg, log, globals }) => {
     count++;
     return msg;
   };

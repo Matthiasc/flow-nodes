@@ -1,4 +1,4 @@
-import { createNode } from "../../lib/create-node.js";
+import { createNode, ProcessFn } from "../../lib/create-node.ts";
 
 /**
  *
@@ -16,7 +16,7 @@ export const createRateLimitingNode = ({
   let calls = 0;
   let lastReset = Date.now();
 
-  const process = async ({ msg, log, globals }) => {
+  const process: ProcessFn = async ({ msg, log, globals }) => {
     const now = Date.now();
 
     // Reset the count after the interval has passed

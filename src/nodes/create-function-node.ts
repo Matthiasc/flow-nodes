@@ -1,4 +1,4 @@
-import { createNode, type ProcessFn } from "../lib/create-node.js";
+import { createNode, type ProcessFn } from "../lib/create-node.ts";
 
 export const createFunctionNode = ({
   name,

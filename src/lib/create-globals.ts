@@ -1,5 +1,5 @@
 export const createGlobals = (): Globals => {
-  const globals = {};
+  const globals: Record<string, any> = {};
   return {
     set: (key, value) => {
       globals[key] = value;

@@ -1,4 +1,4 @@
-import { createNode } from "../../lib/create-node.js";
+import { createNode } from "../../lib/create-node.ts";
 import chokidar from "chokidar";
 import { stat } from "fs/promises";
 import path from "path";

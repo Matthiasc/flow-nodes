@@ -1,6 +1,7 @@
-import { type Globals } from "../lib/create-globals.js";
-import { type Logger } from "../lib/create-logger.js";
-import { createNode, type Msg } from "../lib/create-node.js";
+import { type Globals } from "../lib/create-globals.ts";
+import { type Logger } from "../lib/create-logger.ts";
+import { createNode, type Msg } from "../lib/create-node.ts";
+//@ts-ignore
 import * as ejs from "ejs";
 
 export const createTemplateNode = ({
