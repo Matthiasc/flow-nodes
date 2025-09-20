@@ -1,14 +1,13 @@
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
 //@ts-ignore
 import * as ejs from "ejs";
 
-export const createTemplateNode = ({
-  name,
-  template = "test template <%= msg.payload %>",
-}: {
-  name: string;
-  template: string;
-}) => {
+export type TemplateNodeProps = {
+  template?: string;
+};
+
+export const createTemplateNode: NodeCreationFn<TemplateNodeProps> = (name, props = {}) => {
+  const { template = "test template <%= msg.payload %>" } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
     try {
       msg.payload = await ejs.render(
@@ -23,5 +22,10 @@ export const createTemplateNode = ({
     return msg;
   };
 
-  return createNode({ type: "templateNode", name, process });
+  return createNode({
+    type: "templateNode",
+    name,
+    process,
+    properties: { template }
+  });
 };

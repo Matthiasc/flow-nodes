@@ -1,29 +1,15 @@
-import { Logger } from '../../lib/create-logger.js';
-import { Node, Msg } from '../../lib/create-node.js';
+import { NodeCreationFn } from '../../lib/create-node.js';
 import '../../lib/create-globals.js';
+import '../../lib/create-logger.js';
 
+type RateLimitingNodeProps = {
+    limit?: number;
+    interval?: number;
+};
 /**
  *
  * Will drop messages when the rate limit is exceeded.
  */
-declare const createRateLimitingNode: ({ name, limit, interval, }: {
-    name: string;
-    limit?: number;
-    interval?: number;
-}) => {
-    name: string;
-    type: string;
-    to: (node: Node) => any;
-    children: () => any[];
-    nodeTree: () => {
-        node: Node;
-        children?: Node[];
-    }[];
-    process: ({ msg, globals, }: {
-        msg: Msg;
-        globals?: any;
-    }) => Promise<void>;
-    log: Logger;
-};
+declare const createRateLimitingNode: NodeCreationFn<RateLimitingNodeProps>;
 
-export { createRateLimitingNode };
+export { type RateLimitingNodeProps, createRateLimitingNode };

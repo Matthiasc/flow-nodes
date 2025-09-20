@@ -4,6 +4,9 @@ import { createLogger, type LogEntry, type Logger } from "./create-logger.ts";
 export type Node = any;
 export type Msg = { payload?: any; log?: LogEntry[];[key: string]: any };
 
+// Type for node creation with positional name + props object
+export type NodeCreationFn<T = any> = (name: string, props?: T) => Node;
+
 export type ProcessFn = ({
   msg,
   log,
@@ -19,6 +22,7 @@ type CreateNode = {
   name: string;
   process: ProcessFn;
   onProcessed?: ({ msg }: { msg: Msg }) => void;
+  properties?: Record<string, any>;
 };
 
 // type Process = (args: { msg: Msg; log: Logger; globals: any }) => Promise<Msg>;
@@ -28,6 +32,7 @@ export const createNode = ({
   name,
   process: processFn,
   onProcessed,
+  properties = {},
 }: CreateNode) => {
   if (!name) throw new Error("Node name is required");
   if (!processFn) throw new Error("Node process function is required");
@@ -108,6 +113,7 @@ export const createNode = ({
   return {
     name,
     type,
+    properties,
     to: connectTo,
     children: () => [...connectedTo],
     nodeTree,

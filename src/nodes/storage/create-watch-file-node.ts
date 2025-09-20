@@ -1,10 +1,18 @@
-import { createNode, type ProcessFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
 import chokidar from "chokidar";
 import { stat } from "fs/promises";
 import path from "path";
 
-export const createWatchFileNode = ({ name, filePath }: { name: string; filePath: string }) => {
-  if (!filePath) throw new Error("filePath is required");
+interface WatchFileNodeProps {
+  filePath: string;
+}
+
+export const createWatchFileNode: NodeCreationFn<WatchFileNodeProps> = (name, props) => {
+  if (!props || !props.filePath) {
+    throw new Error('Watch file node requires filePath property');
+  }
+
+  const { filePath } = props;
 
   const process: ProcessFn = async ({ msg, log, globals }) => msg; //just pass the message through
 

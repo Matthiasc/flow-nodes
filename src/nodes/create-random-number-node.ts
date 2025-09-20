@@ -1,14 +1,12 @@
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
 
-export const createRandomNumberNode = ({
-  name,
-  wholeNumber = false,
-  range = [0, 1],
-}: {
-  name: string;
+export type RandomNumberNodeProps = {
   wholeNumber?: boolean;
   range?: [number, number];
-}) => {
+};
+
+export const createRandomNumberNode: NodeCreationFn<RandomNumberNodeProps> = (name, props = {}) => {
+  const { wholeNumber = false, range = [0, 1] } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
 
     const r = range[1] - range[0];
@@ -20,5 +18,10 @@ export const createRandomNumberNode = ({
 
     return msg;
   };
-  return createNode({ type: "randomNumberNode", name, process });
+  return createNode({
+    type: "randomNumberNode",
+    name,
+    process,
+    properties: { wholeNumber, range }
+  });
 };

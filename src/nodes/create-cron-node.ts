@@ -6,24 +6,27 @@
 //and also changes in the processConnected function to handle nodes that can start flows on their own
 //or we could use an event emitter pattern where the cron node emits an event that other nodes can listen to and start processing
 import { CronJob } from 'cron';
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
 
-export const createCronNode = ({
-    name,
-    cronTime,
-    autoStart = true,
-}: {
-    name: string;
+export type CronNodeProps = {
     cronTime: string;
     autoStart?: boolean;
-}) => {
+};
+
+export const createCronNode: NodeCreationFn<CronNodeProps> = (name, props = { cronTime: '* * * * * *' }) => {
+    const { cronTime, autoStart = true } = props;
 
     const process: ProcessFn = async ({ msg, log, globals }) => {
         //just forwarding the message
         return msg;
     };
 
-    const node = createNode({ type: "cronNode", name, process })
+    const node = createNode({
+        type: "cronNode",
+        name,
+        process,
+        properties: { cronTime, autoStart }
+    })
 
     const job = CronJob.from({
         cronTime,

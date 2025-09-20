@@ -18,80 +18,76 @@ import { createRateLimitingNode } from "../src/nodes/flow/create-rate-limiting-n
 import { createFunctionNode } from "../src/nodes/create-function-node.ts";
 import { createSendSimpleMailNode } from "../src/nodes/create-send-simple-mail-node.ts";
 import { createCronNode } from "../src/nodes/create-cron-node.ts";
+import { nodeToFlowJson } from "../src/lib/serialize-flow.ts";
 
 /**
  * create the nodes
  */
 
-const nDebugger = createDebuggerNode({ name: "debuggerNode1" });
-const nDebugger2 = createDebuggerNode({ name: "debuggerNode2" });
+const nDebugger = createDebuggerNode("debuggerNode1");
+const nDebugger2 = createDebuggerNode("debuggerNode2");
 
-const nHtmlRequest = createHttpRequestNode({
-  name: "fetchNode1",
+const nHtmlRequest = createHttpRequestNode("fetchNode1", {
+
   url: "https://thuis.minck.be",
+
 });
 
-const nHtmlSelector = createHtmlSelectorNode({
-  name: "selectorNode1",
-  selector: "article h2",
+const nHtmlSelector = createHtmlSelectorNode("selectorNode1", {
+  selector: "article h2"
 });
 
-const nRandomNumber1 = createRandomNumberNode({
-  name: "randomNumberNode1",
+const nRandomNumber1 = createRandomNumberNode("randomNumberNode1", {
+
   wholeNumber: true,
   range: [0, 10],
-});
-const nRandomNumber2 = createRandomNumberNode({
-  name: "randomNumberNode2",
+}
+);
+const nRandomNumber2 = createRandomNumberNode("randomNumberNode2", {
+
   wholeNumber: false,
   range: [0, 1],
-});
+}
+);
 
-const nDelay = createDelayNode({ name: "delayNode1", delay: 1000 });
+const nDelay = createDelayNode("delayNode1", { delay: 1000 });
 
-const nPassThrough = createPassThroughNode({ name: "passThroughNode1" });
+const nPassThrough = createPassThroughNode("passThroughNode1");
 
-const nSelectRandomFromArray = createFunctionNode({
-  name: "selectRandomFromArray",
-  func: async ({ msg }) => {
-    if (!Array.isArray(msg.payload)) throw new Error("Input is not an array");
-    const array = msg.payload;
-    const index = Math.floor(Math.random() * array.length);
-    return array[index];
-  },
-});
 
-const nRateLimitingNode = createRateLimitingNode({
-  name: "rateLimitingNode",
+
+const nRateLimitingNode = createRateLimitingNode("rateLimitingNode", {
+
   limit: 2,
   interval: 2000,
+
 });
 
-const nBatchNode = createBatchNode({ name: "batchNode1", numberOfMessages: 5 });
+const nBatchNode = createBatchNode("batchNode1", { numberOfMessages: 5 });
 
-const nTemplateNode = createTemplateNode({
-  name: "templateNode1",
+const nTemplateNode = createTemplateNode("templateNode1", {
+
   template: `<h1>test template<h1/>
-            <p><%= msg.payload %></p>`,
+            <p><%= msg.payload %></p>`
+
 });
 
-const nWriteToFile = createWriteFileNode({
-  name: "writeToFileNode1",
-  filePath: "./test.txt",
+const nWriteToFile = createWriteFileNode("writeToFileNode1", {
+  filePath: "./test.txt"
 });
 
-const nWatchFile = createWatchFileNode({
-  name: "watchFileNode1",
-  filePath: "./test.txt",
+const nWatchFile = createWatchFileNode("watchFileNode1", {
+  filePath: "./test.txt"
 });
 
-const nReadFile = createReadFileNode({
-  name: "readFileNode1",
-  filePath: "./test.txt",
+const nReadFile = createReadFileNode("readFileNode1", {
+
+  filePath: "./test.txt"
+
 });
 
-const nSendMail = createSendSimpleMailNode({
-  name: "sendMail",
+const nSendMail = createSendSimpleMailNode("sendMail", {
+
   smtpConfig: {
     service: "gmail",
     auth: {
@@ -107,8 +103,7 @@ const nSendMail = createSendSimpleMailNode({
   },
 });
 
-const nCron = createCronNode({
-  name: "cronNode1",
+const nCron = createCronNode("cronNode1", {
   cronTime: "* * * * * *",
 });
 
@@ -121,7 +116,7 @@ nCron.start();
 // nFetch.to(nHtmlSelector).to([nDebugger, nDebugger2]);
 nHtmlRequest
   .to(nHtmlSelector)
-  .to(nSelectRandomFromArray)
+  // .to(nSelectRandomFromArray)
   .to(nTemplateNode)
   .to([nSendMail, nDebugger])
 // .to()
@@ -156,3 +151,14 @@ setInterval(() => {
 
 // nFetch.process({ selector: "article h2" })
 // nRandomNumber.process({})
+
+/**
+ * Test flow serialization
+ */
+console.log("\n=== Flow Serialization Test ===");
+console.log("Serializing flow starting from nRateLimitingNode:");
+console.log(nodeToFlowJson(nRateLimitingNode));
+
+console.log("\n=== Simple Flow Test ===");
+console.log("Serializing flow starting from nRandomNumber1:");
+console.log(nodeToFlowJson(nRandomNumber1));

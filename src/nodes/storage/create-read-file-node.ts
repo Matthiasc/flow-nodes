@@ -1,15 +1,13 @@
-import { createNode, type ProcessFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
 import { readFile } from "fs/promises";
 
-export const createReadFileNode = ({
-  name,
-  filePath,
-  encoding = "utf-8",
-}: {
-  name: string;
+export type ReadFileNodeProps = {
   filePath?: string;
   encoding?: BufferEncoding;
-}) => {
+};
+
+export const createReadFileNode: NodeCreationFn<ReadFileNodeProps> = (name, props = {}) => {
+  let { filePath, encoding = "utf-8" } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
     filePath = msg.payload || filePath;
     if (!filePath) throw new Error("No filePath provided");
@@ -27,5 +25,10 @@ export const createReadFileNode = ({
     }
   };
 
-  return createNode({ type: "readFileNode", name, process });
+  return createNode({
+    type: "readFileNode",
+    name,
+    process,
+    properties: { filePath, encoding }
+  });
 };

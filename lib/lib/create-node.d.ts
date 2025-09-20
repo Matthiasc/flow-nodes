@@ -7,6 +7,7 @@ type Msg = {
     log?: LogEntry[];
     [key: string]: any;
 };
+type NodeCreationFn<T = any> = (name: string, props?: T) => Node;
 type ProcessFn = ({ msg, log, globals, }: {
     msg: Msg;
     log: Logger;
@@ -19,10 +20,12 @@ type CreateNode = {
     onProcessed?: ({ msg }: {
         msg: Msg;
     }) => void;
+    properties?: Record<string, any>;
 };
-declare const createNode: ({ type, name, process: processFn, onProcessed, }: CreateNode) => {
+declare const createNode: ({ type, name, process: processFn, onProcessed, properties, }: CreateNode) => {
     name: string;
     type: string;
+    properties: Record<string, any>;
     to: (node: Node) => any;
     children: () => any[];
     nodeTree: () => {
@@ -36,4 +39,4 @@ declare const createNode: ({ type, name, process: processFn, onProcessed, }: Cre
     log: Logger;
 };
 
-export { type Msg, type Node, type ProcessFn, createNode };
+export { type Msg, type Node, type NodeCreationFn, type ProcessFn, createNode };

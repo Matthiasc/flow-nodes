@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
-import SMTPPool from "nodemailer/lib/smtp-pool/index";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
+import { } from "nodemailer";
 
 type MailOptions = {
   from?: string;
@@ -16,15 +16,17 @@ type MailOptions = {
   //   replyTo?: string;
 };
 
-export const createSendSimpleMailNode = ({
-  name,
-  smtpConfig,
-  mailOptions,
-}: {
-  name: string;
-  smtpConfig: SMTPPool | SMTPPool.Options;
+interface SendSimpleMailNodeProps {
+  smtpConfig: any;
   mailOptions?: MailOptions;
-}) => {
+}
+
+export const createSendSimpleMailNode: NodeCreationFn<SendSimpleMailNodeProps> = (name, props) => {
+  if (!props || !props.smtpConfig) {
+    throw new Error('Send simple mail node requires smtpConfig property');
+  }
+
+  const { smtpConfig, mailOptions } = props;
   const transporter = nodemailer.createTransport(smtpConfig);
 
   const process: ProcessFn = async ({ msg, log }) => {

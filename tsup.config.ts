@@ -1,7 +1,13 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/nodes/**/*.ts", "src/lib/*.ts"],
+  entry: [
+    "src/index.ts",
+    "src/nodes/**/*.ts",
+    "src/lib/*.ts",
+    // Exclude test files from compilation
+    "!src/**/*.test.ts"
+  ],
   outDir: "lib",
   format: ["esm"],
   dts: true,

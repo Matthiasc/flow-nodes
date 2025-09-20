@@ -1,21 +1,20 @@
-import { createNode, type ProcessFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
 import { promises as fs } from "fs";
 import path from "path";
 
-export const createWriteFileNode = ({
-  name,
-  filePath,
-  createDir = true,
-  appendToFile = true,
-  newline = true,
-}: {
-  name: string;
+interface WriteFileNodeProps {
   filePath: string;
   createDir?: boolean;
   appendToFile?: boolean;
   newline?: boolean;
-}) => {
-  if (!filePath) throw new Error("filePath is required");
+}
+
+export const createWriteFileNode: NodeCreationFn<WriteFileNodeProps> = (name, props) => {
+  if (!props || !props.filePath) {
+    throw new Error('Write file node requires filePath property');
+  }
+
+  const { filePath, createDir = true, appendToFile = true, newline = true } = props;
 
   const process: ProcessFn = async ({ msg, log, globals }) => {
     try {

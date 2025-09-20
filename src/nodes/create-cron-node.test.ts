@@ -14,8 +14,7 @@ describe('createCronNode', () => {
     it('should create a cron node with correct properties', async () => {
         let count = 0;
 
-        const cronNode = createCronNode({
-            name: 'test-cron',
+        const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *',
             autoStart: false
         });
@@ -33,14 +32,13 @@ describe('createCronNode', () => {
         cronNode.to(testNode);
         cronNode.start();
 
-        await new Promise(resolve => setTimeout(resolve, 3100));
+        await new Promise(resolve => setTimeout(resolve, 3005));
 
         expect(count).toBe(3);
     });
 
     it('should start and stop the cron job', () => {
-        const cronNode = createCronNode({
-            name: 'test-cron',
+        const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *',
             autoStart: false
         });
@@ -55,8 +53,7 @@ describe('createCronNode', () => {
     });
 
     it('should auto-start when autoStart is true', () => {
-        const cronNode = createCronNode({
-            name: 'test-cron',
+        const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *',
             autoStart: true
         });
@@ -66,8 +63,7 @@ describe('createCronNode', () => {
     });
 
     it('should not auto-start when autoStart is false', () => {
-        const cronNode = createCronNode({
-            name: 'test-cron',
+        const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *',
             autoStart: false
         });
@@ -76,8 +72,7 @@ describe('createCronNode', () => {
     });
 
     it('should use default autoStart value of true', () => {
-        const cronNode = createCronNode({
-            name: 'test-cron',
+        const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *'
             // autoStart not specified, should default to true
         });

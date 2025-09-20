@@ -6,7 +6,7 @@ describe('createDelayNode', () => {
         const delayTime = 1000; // 1 second
 
 
-        const delayNode = createDelayNode({ name: "test", delay: delayTime });
+        const delayNode = createDelayNode("test", { delay: delayTime });
 
         const start = Date.now();
         await delayNode.process({ msg: { payload: "test" } });

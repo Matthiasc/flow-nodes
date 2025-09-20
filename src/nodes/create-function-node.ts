@@ -1,12 +1,16 @@
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
 
-export const createFunctionNode = ({
-  name,
-  func,
-}: {
-  name: string;
+interface FunctionNodeProps {
   func: ProcessFn;
-}) => {
+}
+
+export const createFunctionNode: NodeCreationFn<FunctionNodeProps> = (name, props) => {
+  if (!props || !props.func) {
+    throw new Error('Function node requires a func property');
+  }
+
+  const { func } = props;
+
   const process: ProcessFn = async ({ msg, log, globals }) => {
     if (typeof func !== "function") {
       throw new Error("Function is missing");

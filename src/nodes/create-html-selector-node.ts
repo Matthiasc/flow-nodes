@@ -1,7 +1,17 @@
 import * as cheerio from "cheerio";
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type NodeCreationFn, type ProcessFn } from "../lib/create-node.ts";
 
-export const createHtmlSelectorNode = ({ name, selector }: { name: string, selector: string }) => {
+export type HtmlSelectorNodeProps = {
+  selector: string;
+};
+
+export const createHtmlSelectorNode: NodeCreationFn<HtmlSelectorNodeProps> = (name, props) => {
+  if (!props || !props.selector) {
+    throw new Error('HTML selector node requires a selector property');
+  }
+
+  const { selector } = props;
+
   const process: ProcessFn = async ({ msg, log, globals }) => {
     if (typeof msg.payload !== "string") {
       throw new Error("Input is not a string, unable to parse HTML.");
@@ -9,6 +19,10 @@ export const createHtmlSelectorNode = ({ name, selector }: { name: string, selec
 
     //@ts-ignore
     const _selector = selector || msg.selector;
+
+    if (!_selector) {
+      throw new Error("No CSS selector provided");
+    }
 
     try {
       const $ = cheerio.load(msg.payload);
@@ -29,5 +43,11 @@ export const createHtmlSelectorNode = ({ name, selector }: { name: string, selec
       throw new Error(`Error parsing HTML: ${error}`);
     }
   };
-  return createNode({ type: "selectorNode", name, process });
+
+  return createNode({
+    type: "selectorNode",
+    name,
+    process,
+    properties: { selector }
+  });
 };

@@ -1,14 +1,12 @@
-import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
 
-export const createHttpRequestNode = ({
-  name,
-  url,
-  onProcessed,
-}: {
-  name: string;
+export type HttpRequestNodeProps = {
   url?: string;
   onProcessed?: (msg: any) => any;
-}) => {
+};
+
+export const createHttpRequestNode: NodeCreationFn<HttpRequestNodeProps> = (name, props = {}) => {
+  const { url, onProcessed } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
     // @ts-ignore
     const _url = url || msg.url;
@@ -29,5 +27,11 @@ export const createHttpRequestNode = ({
     }
   };
 
-  return createNode({ type: "fetchNode", name, process, onProcessed });
+  return createNode({
+    type: "fetchNode",
+    name,
+    process,
+    onProcessed,
+    properties: { url }
+  });
 };

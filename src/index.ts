@@ -1,6 +1,7 @@
 export { createNode } from "./lib/create-node.ts";
 export { createLogger } from "./lib/create-logger.ts";
 export { createGlobals } from "./lib/create-globals.ts";
+export { serializeFlow, flowToJson, nodeToFlowJson, type SerializedFlow, type SerializedNode } from "./lib/serialize-flow.ts";
 
 //flow
 export { createBatchNode } from "./nodes/flow/create-batch-node.ts";

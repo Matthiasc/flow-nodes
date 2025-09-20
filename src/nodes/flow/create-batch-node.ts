@@ -1,6 +1,11 @@
-import { createNode, type ProcessFn, type Msg } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeCreationFn, type Msg } from "../../lib/create-node.ts";
 
-export const createBatchNode = ({ name, numberOfMessages = 5 }: { name: string; numberOfMessages?: number }) => {
+export type BatchNodeProps = {
+  numberOfMessages?: number;
+};
+
+export const createBatchNode: NodeCreationFn<BatchNodeProps> = (name, props = {}) => {
+  const { numberOfMessages = 10 } = props;
   const messages: Msg[] = [];
 
   const process: ProcessFn = async ({ msg, log, globals }) => {
@@ -17,5 +22,10 @@ export const createBatchNode = ({ name, numberOfMessages = 5 }: { name: string; 
     return result;
   };
 
-  return createNode({ type: "batchNode", name, process });
+  return createNode({
+    type: "batchNode",
+    name,
+    process,
+    properties: { numberOfMessages }
+  });
 };

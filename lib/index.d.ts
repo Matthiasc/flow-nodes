@@ -1,6 +1,7 @@
 export { createNode } from './lib/create-node.js';
 export { createLogger } from './lib/create-logger.js';
 export { createGlobals } from './lib/create-globals.js';
+export { SerializedFlow, SerializedNode, flowToJson, nodeToFlowJson, serializeFlow } from './lib/serialize-flow.js';
 export { createBatchNode } from './nodes/flow/create-batch-node.js';
 export { createDelayNode } from './nodes/flow/create-delay-node.js';
 export { createPassThroughNode } from './nodes/flow/create-passthrough-node.js';
