@@ -1,6 +1,4 @@
-import { type Globals } from "../lib/create-globals.ts";
-import { type Logger } from "../lib/create-logger.ts";
-import { createNode, type Msg } from "../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../lib/create-node.ts";
 
 export const createRandomNumberNode = ({
   name,
@@ -11,12 +9,7 @@ export const createRandomNumberNode = ({
   wholeNumber?: boolean;
   range?: [number, number];
 }) => {
-  const process = async ({ msg, log }: {
-    msg: Msg;
-    log: Logger;
-    globals: Globals;
-  }) => {
-    // console.log(Math.random())
+  const process: ProcessFn = async ({ msg, log, globals }) => {
 
     const r = range[1] - range[0];
     const randomNumber = Math.random() * r + range[0];
@@ -27,5 +20,5 @@ export const createRandomNumberNode = ({
 
     return msg;
   };
-  return createNode({ type: "debuggerNode", name, process });
+  return createNode({ type: "randomNumberNode", name, process });
 };

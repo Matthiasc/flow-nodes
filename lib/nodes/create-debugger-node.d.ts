@@ -3,7 +3,7 @@ import { Node, Msg } from '../lib/create-node.js';
 import '../lib/create-globals.js';
 
 declare const createDebuggerNode: ({ name }: {
-    name: any;
+    name: string;
 }) => {
     name: string;
     type: string;

@@ -3,9 +3,9 @@ import { Node, Msg } from '../lib/create-node.js';
 import '../lib/create-globals.js';
 
 declare const createRandomNumberNode: ({ name, wholeNumber, range, }: {
-    name: any;
+    name: string;
     wholeNumber?: boolean;
-    range?: number[];
+    range?: [number, number];
 }) => {
     name: string;
     type: string;

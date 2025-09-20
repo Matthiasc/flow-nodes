@@ -21,8 +21,10 @@ export const createLogger = (nodeName: string): Logger => {
 
   function addLog(type: LogLevel, message: string) {
     const time = new Date().toISOString();
-    _nodeLog.push({ time, type, nodeName, message });
-    _messageLog && _messageLog.push({ time, type, nodeName, message });
+    const entry: LogEntry = { time, type, nodeName, message };
+
+    _nodeLog.push(entry);
+    _messageLog?.push(entry);
   }
 
   return {

@@ -1,6 +1,4 @@
-import { type Globals } from "../lib/create-globals.ts";
-import { type Logger } from "../lib/create-logger.ts";
-import { createNode, type Msg } from "../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../lib/create-node.ts";
 //@ts-ignore
 import * as ejs from "ejs";
 
@@ -11,15 +9,7 @@ export const createTemplateNode = ({
   name: string;
   template: string;
 }) => {
-  const process = async ({
-    msg,
-    log,
-    globals,
-  }: {
-    msg: Msg;
-    log: Logger;
-    globals: Globals;
-  }) => {
+  const process: ProcessFn = async ({ msg, log, globals }) => {
     try {
       msg.payload = await ejs.render(
         template,
@@ -33,5 +23,5 @@ export const createTemplateNode = ({
     return msg;
   };
 
-  return createNode({ type: "delayNode", name, process });
+  return createNode({ type: "templateNode", name, process });
 };

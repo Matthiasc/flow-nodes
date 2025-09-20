@@ -1,4 +1,4 @@
-import { createNode, ProcessFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../../lib/create-node.ts";
 
 export const createPassThroughNode = ({ name }: { name: string }) => {
   let count = 0;

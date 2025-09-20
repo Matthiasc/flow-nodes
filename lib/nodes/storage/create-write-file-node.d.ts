@@ -3,8 +3,8 @@ import { Node, Msg } from '../../lib/create-node.js';
 import '../../lib/create-globals.js';
 
 declare const createWriteFileNode: ({ name, filePath, createDir, appendToFile, newline, }: {
-    name: any;
-    filePath: any;
+    name: string;
+    filePath: string;
     createDir?: boolean;
     appendToFile?: boolean;
     newline?: boolean;

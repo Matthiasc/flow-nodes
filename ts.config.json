@@ -9,5 +9,7 @@
     "esModuleInterop": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }

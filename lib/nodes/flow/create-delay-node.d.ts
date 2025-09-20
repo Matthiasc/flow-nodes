@@ -3,7 +3,7 @@ import { Node, Msg } from '../../lib/create-node.js';
 import '../../lib/create-globals.js';
 
 declare const createDelayNode: ({ name, delay }: {
-    name: any;
+    name: string;
     delay?: number;
 }) => {
     name: string;

@@ -1,9 +1,9 @@
-import { Node, Msg } from '../../lib/create-node.js';
 import { Logger } from '../../lib/create-logger.js';
+import { Node, Msg } from '../../lib/create-node.js';
 import '../../lib/create-globals.js';
 
 declare const createBatchNode: ({ name, numberOfMessages }: {
-    name: any;
+    name: string;
     numberOfMessages?: number;
 }) => {
     name: string;

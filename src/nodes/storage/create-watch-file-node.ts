@@ -1,15 +1,17 @@
-import { createNode } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../../lib/create-node.ts";
 import chokidar from "chokidar";
 import { stat } from "fs/promises";
 import path from "path";
 
-export const createWatchFileNode = ({ name, filePath }) => {
+export const createWatchFileNode = ({ name, filePath }: { name: string; filePath: string }) => {
   if (!filePath) throw new Error("filePath is required");
+
+  const process: ProcessFn = async ({ msg, log, globals }) => msg; //just pass the message through
 
   const n = createNode({
     type: "watchFileNode",
     name,
-    process: async ({ msg, log, globals }) => msg, //just pass the message through
+    process,
   });
 
   const watcher = chokidar.watch(filePath, {

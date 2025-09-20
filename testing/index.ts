@@ -109,11 +109,11 @@ const nSendMail = createSendSimpleMailNode({
 
 const nCron = createCronNode({
   name: "cronNode1",
-  cronTime: "* * * * *",
+  cronTime: "* * * * * *",
 });
 
-// nCron.to(nRandomNumber1).to(nDebugger);
-
+nCron.to(nRandomNumber1).to(nDebugger);
+nCron.start();
 
 /**
  * links the nodes, make the flow

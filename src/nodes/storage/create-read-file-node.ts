@@ -27,5 +27,5 @@ export const createReadFileNode = ({
     }
   };
 
-  return createNode({ type: "debuggerNode", name, process });
+  return createNode({ type: "readFileNode", name, process });
 };

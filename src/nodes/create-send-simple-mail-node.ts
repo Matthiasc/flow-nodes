@@ -56,7 +56,6 @@ export const createSendSimpleMailNode = ({
         envelope: info.envelope,
         accepted: info.accepted,
         rejected: info.rejected,
-        pending: info.pending,
         response: info.response,
       };
       return msg;

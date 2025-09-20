@@ -11,27 +11,52 @@ import { createNode, type ProcessFn } from "../lib/create-node.ts";
 export const createCronNode = ({
     name,
     cronTime,
+    autoStart = true,
 }: {
     name: string;
     cronTime: string;
+    autoStart?: boolean;
 }) => {
+
+    const process: ProcessFn = async ({ msg, log, globals }) => {
+        //just forwarding the message
+        return msg;
+    };
+
+    const node = createNode({ type: "cronNode", name, process })
 
     const job = CronJob.from({
         cronTime,
         onTick: () => {
-            const msg = { payload: null };
+            node.process({
+                msg: {
+                    payload: {
+                        name,
+                        timestamp: Date.now(),
+                        nextDate: job.nextDate()
+                    }
+                }
+            });
         },
-        start: false,
+        start: autoStart,
     });
 
-
-
-    const process: ProcessFn = async ({ msg, log, globals }) => {
+    // console.log(job)
+    function start() {
         if (!job.isActive) {
             job.start();
         }
-        return null;
-    };
+    }
 
-    return createNode({ type: "cronNode", name, process });
+    function stop() {
+        if (job.isActive) {
+            job.stop();
+        }
+    }
+
+    function isRunning() {
+        return job.isActive;
+    }
+
+    return { ...node, start, stop, isRunning };
 };

@@ -1,19 +1,9 @@
-import { type Globals } from "../../lib/create-globals.ts";
-import { type Logger } from "../../lib/create-logger.ts";
-import { createNode, type Msg } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type Msg } from "../../lib/create-node.ts";
 
-export const createBatchNode = ({ name, numberOfMessages = 5 }) => {
+export const createBatchNode = ({ name, numberOfMessages = 5 }: { name: string; numberOfMessages?: number }) => {
   const messages: Msg[] = [];
 
-  const process = async ({
-    msg,
-    log,
-    globals,
-  }: {
-    msg: Msg;
-    log: Logger;
-    globals: Globals;
-  }) => {
+  const process: ProcessFn = async ({ msg, log, globals }) => {
     messages.push(msg);
 
     if (messages.length < numberOfMessages) {
@@ -27,5 +17,5 @@ export const createBatchNode = ({ name, numberOfMessages = 5 }) => {
     return result;
   };
 
-  return createNode({ type: "delayNode", name, process });
+  return createNode({ type: "batchNode", name, process });
 };

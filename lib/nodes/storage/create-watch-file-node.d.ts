@@ -3,8 +3,8 @@ import { Node, Msg } from '../../lib/create-node.js';
 import '../../lib/create-globals.js';
 
 declare const createWatchFileNode: ({ name, filePath }: {
-    name: any;
-    filePath: any;
+    name: string;
+    filePath: string;
 }) => {
     name: string;
     type: string;

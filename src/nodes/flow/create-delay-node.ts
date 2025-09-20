@@ -1,7 +1,7 @@
-import { createNode } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn } from "../../lib/create-node.ts";
 
-export const createDelayNode = ({ name, delay = 1000 }) => {
-  const process = async ({ msg, log, globals }) => {
+export const createDelayNode = ({ name, delay = 1000 }: { name: string; delay?: number }) => {
+  const process: ProcessFn = async ({ msg, log, globals }) => {
     await new Promise((resolve) => setTimeout(resolve, delay));
     // msg.payload = payload;
     return msg;
