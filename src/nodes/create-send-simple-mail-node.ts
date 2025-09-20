@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { createNode, type ProcessFn } from "../lib/create-node.ts";
+import SMTPPool from "nodemailer/lib/smtp-pool/index";
 
 type MailOptions = {
   from?: string;
@@ -21,7 +22,7 @@ export const createSendSimpleMailNode = ({
   mailOptions,
 }: {
   name: string;
-  smtpConfig: any;
+  smtpConfig: SMTPPool | SMTPPool.Options;
   mailOptions?: MailOptions;
 }) => {
   const transporter = nodemailer.createTransport(smtpConfig);
