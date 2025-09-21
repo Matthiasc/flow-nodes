@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { serializeFlow, flowToJson, nodeToFlowJson } from './serialize-flow.ts';
+import { serializeFlow, flowToJson, serializeNodes } from './serialize-flow.ts';
 import { createDelayNode } from '../nodes/flow/create-delay-node.ts';
 import { createDebuggerNode } from '../nodes/create-debugger-node.ts';
 import { createRateLimitingNode } from '../nodes/flow/create-rate-limiting-node.ts';
@@ -11,7 +11,7 @@ describe('serialize-flow', () => {
         it('should serialize a single node', () => {
             const delayNode = createDelayNode("test-delay", { delay: 500 });
 
-            const result = serializeFlow(delayNode);
+            const result = serializeFlow([delayNode]);
 
             expect(result).toEqual({
                 nodes: [{
@@ -19,9 +19,10 @@ describe('serialize-flow', () => {
                     name: "test-delay",
                     type: "delayNode",
                     properties: { delay: 500 },
-                    connections: []
+                    connections: [],
+                    isTrigger: false
                 }],
-                startNode: "test-delay"
+                startNodes: ["test-delay"]
             });
         });
 
@@ -31,10 +32,10 @@ describe('serialize-flow', () => {
 
             delayNode.to(debugNode);
 
-            const result = serializeFlow(delayNode);
+            const result = serializeFlow([delayNode]);
 
             expect(result.nodes).toHaveLength(2);
-            expect(result.startNode).toBe("delay");
+            expect(result.startNodes).toEqual(["delay"]);
 
             const delayNodeSerialized = result.nodes.find(n => n.name === "delay");
             const debugNodeSerialized = result.nodes.find(n => n.name === "debug");
@@ -44,7 +45,8 @@ describe('serialize-flow', () => {
                 name: "delay",
                 type: "delayNode",
                 properties: { delay: 1000 },
-                connections: ["debug"]
+                connections: ["debug"],
+                isTrigger: false
             });
 
             expect(debugNodeSerialized).toEqual({
@@ -52,7 +54,8 @@ describe('serialize-flow', () => {
                 name: "debug",
                 type: "debuggerNode",
                 properties: {},
-                connections: []
+                connections: [],
+                isTrigger: false
             });
         });
 
@@ -65,10 +68,10 @@ describe('serialize-flow', () => {
             rateLimitNode.to(delayNode);
             delayNode.to([debugNode1, debugNode2]);
 
-            const result = serializeFlow(rateLimitNode);
+            const result = serializeFlow([rateLimitNode]);
 
             expect(result.nodes).toHaveLength(4);
-            expect(result.startNode).toBe("rate-limit");
+            expect(result.startNodes).toEqual(["rate-limit"]);
 
             const delayNodeSerialized = result.nodes.find(n => n.name === "delay");
             expect(delayNodeSerialized?.connections).toEqual(["debug1", "debug2"]);
@@ -83,10 +86,10 @@ describe('serialize-flow', () => {
             passThrough2.to(batchNode);
 
             // Start from passThrough1 - should capture both paths
-            const result = serializeFlow(passThrough1);
+            const result = serializeFlow([passThrough1]);
 
             expect(result.nodes).toHaveLength(2); // pass1 and batch (pass2 not reachable from pass1)
-            expect(result.startNode).toBe("pass1");
+            expect(result.startNodes).toEqual(["pass1"]);
         });
 
         it('should handle circular flows without infinite loops', () => {
@@ -99,10 +102,10 @@ describe('serialize-flow', () => {
             node2.to(node3);
             node3.to(node1);
 
-            const result = serializeFlow(node1);
+            const result = serializeFlow([node1]);
 
             expect(result.nodes).toHaveLength(3);
-            expect(result.startNode).toBe("node1");
+            expect(result.startNodes).toEqual(["node1"]);
 
             // Verify the circular connections
             const node1Serialized = result.nodes.find(n => n.name === "node1");
@@ -124,7 +127,7 @@ describe('serialize-flow', () => {
 
             rateLimitNode.to(delayNode).to(batchNode);
 
-            const result = serializeFlow(rateLimitNode);
+            const result = serializeFlow([rateLimitNode]);
 
             const rateLimitSerialized = result.nodes.find(n => n.name === "rate-limit");
             const delaySerialized = result.nodes.find(n => n.name === "delay");
@@ -141,7 +144,7 @@ describe('serialize-flow', () => {
 
             debugNode.to(passThroughNode);
 
-            const result = serializeFlow(debugNode);
+            const result = serializeFlow([debugNode]);
 
             expect(result.nodes).toHaveLength(2);
 
@@ -163,7 +166,7 @@ describe('serialize-flow', () => {
                     properties: { prop: "value" },
                     connections: ["other"]
                 }],
-                startNode: "test"
+                startNodes: ["test"]
             };
 
             const result = flowToJson(flow);
@@ -175,18 +178,18 @@ describe('serialize-flow', () => {
         });
     });
 
-    describe('nodeToFlowJson', () => {
+    describe('serializeNodes', () => {
         it('should serialize node and return JSON string in one call', () => {
             const delayNode = createDelayNode("test-delay", { delay: 750 });
             const debugNode = createDebuggerNode("test-debug");
 
             delayNode.to(debugNode);
 
-            const result = nodeToFlowJson(delayNode);
+            const result = serializeNodes([delayNode]);
             const parsed = JSON.parse(result);
 
             expect(parsed.nodes).toHaveLength(2);
-            expect(parsed.startNode).toBe("test-delay");
+            expect(parsed.startNodes).toEqual(["test-delay"]);
             expect(parsed.nodes[0].properties.delay).toBe(750);
             expect(result).toContain('\n'); // Should be pretty-printed
         });
@@ -201,10 +204,10 @@ describe('serialize-flow', () => {
             node1.to(node2).to(node3);
 
             // Start serialization from the middle node
-            const result = serializeFlow(node2);
+            const result = serializeFlow([node2]);
 
             expect(result.nodes).toHaveLength(2); // Only node2 and node3
-            expect(result.startNode).toBe("node2");
+            expect(result.startNodes).toEqual(["node2"]);
             expect(result.nodes.some(n => n.name === "node1")).toBe(false);
         });
 
@@ -216,7 +219,7 @@ describe('serialize-flow', () => {
             connectedNode1.to(connectedNode2);
             // isolatedNode is not connected to anything
 
-            const result = serializeFlow(connectedNode1);
+            const result = serializeFlow([connectedNode1]);
 
             expect(result.nodes).toHaveLength(2);
             expect(result.nodes.every(n => n.name !== "isolated")).toBe(true);

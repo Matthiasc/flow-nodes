@@ -21,64 +21,88 @@ export interface SerializedNode {
     type: string;
     properties: Record<string, any>;
     connections: string[];
+    isTrigger?: boolean;
 }
 
 export interface SerializedFlow {
     nodes: SerializedNode[];
-    startNode: string;
+    startNodes: string[];
+}
+
+/**
+ * Result of deserializing a flow, containing trigger nodes and all nodes
+ */
+export interface DeserializedFlow {
+    triggerNodes: Node[];
+    allNodes: Map<string, Node>;
+    getNode: (name: string) => Node | undefined;
+    startFlow: () => void;
+    stopFlow: () => void;
+    startTrigger: (nodeName: string) => void;
+    stopTrigger: (nodeName: string) => void;
 }
 
 
 /**
- * Serializes a flow graph to JSON starting from a given node
- * @param startNode - The starting node of the flow
+ * Serializes a flow graph starting from given nodes, detecting trigger nodes automatically
+ * @param nodes - Array of nodes in the flow (can be any nodes, trigger nodes will be auto-detected)
  * @returns A JSON representation of the entire flow graph
  */
-export const serializeFlow = (startNode: Node): SerializedFlow => {
+export const serializeFlow = (nodes: Node[]): SerializedFlow => {
     const visitedNodes = new Set<string>();
     const serializedNodes: SerializedNode[] = [];
+    const allNodes = new Set<Node>();
 
     const extractNodeProperties = (node: Node): Record<string, any> => {
         return structuredClone(node.properties || {});
     };
 
-    const traverseNode = (node: Node): void => {
-        if (!node || visitedNodes.has(node.name)) {
+    // Collect all nodes in the flow by traversing from each provided node
+    const collectAllNodes = (node: Node): void => {
+        if (!node || allNodes.has(node)) {
             return;
         }
+        allNodes.add(node);
 
-        visitedNodes.add(node.name);
+        // Traverse children
+        node.children().forEach((child: any) => {
+            collectAllNodes(child);
+        });
+    };
 
-        // Get connected children using children() method to avoid infinite recursion
+    // Collect all nodes starting from provided nodes
+    nodes.forEach(node => collectAllNodes(node));
+
+    // Serialize all nodes
+    allNodes.forEach(node => {
         const connectedChildren = node.children();
         const connections = connectedChildren.map((child: any) => child.name);
-
-        // Extract properties
         const properties = extractNodeProperties(node);
+        const isTrigger = isTriggerNode(node);
 
-        // Create serialized node
         const serializedNode: SerializedNode = {
             id: node.name,
             name: node.name,
             type: node.type,
             properties,
-            connections
+            connections,
+            isTrigger
         };
 
         serializedNodes.push(serializedNode);
+    });
 
-        // Recursively traverse connected nodes
-        connectedChildren.forEach((child: any) => {
-            traverseNode(child);
-        });
-    };
+    // Find trigger nodes (nodes that have start/stop methods)
+    const triggerNodeNames = serializedNodes
+        .filter(node => node.isTrigger)
+        .map(node => node.name);
 
-    // Start traversal from the given node
-    traverseNode(startNode);
+    // If no trigger nodes found, treat first provided node as start node (backward compatibility)
+    const startNodes = triggerNodeNames.length > 0 ? triggerNodeNames : [nodes[0].name];
 
     return {
         nodes: serializedNodes,
-        startNode: startNode.name
+        startNodes
     };
 };
 
@@ -92,13 +116,23 @@ export const flowToJson = (flow: SerializedFlow): string => {
 };
 
 /**
- * Convenience function that takes a starting node and returns a JSON string representation
- * @param startNode - The starting node of the flow
+ * Convenience function that takes nodes and returns a JSON string representation
+ * @param nodes - Array of nodes in the flow
  * @returns A formatted JSON string representing the entire flow
  */
-export const nodeToFlowJson = (startNode: Node): string => {
-    const serializedFlow = serializeFlow(startNode);
+export const serializeNodes = (nodes: Node[]): string => {
+    const serializedFlow = serializeFlow(nodes);
     return flowToJson(serializedFlow);
+};
+
+/**
+ * Convenience function that takes a JSON string and returns the deserialized flow
+ * @param jsonString - A JSON string representing a serialized flow
+ * @returns Object containing trigger nodes, all nodes, and flow control methods
+ */
+export const deserializeNodes = (jsonString: string): DeserializedFlow => {
+    const serializedFlow: SerializedFlow = JSON.parse(jsonString);
+    return deserializeFlow(serializedFlow);
 };
 
 // Node factory mapping
@@ -123,11 +157,18 @@ const nodeFactories: Record<string, NodeFactory> = {
 };
 
 /**
- * Deserializes a flow from JSON format back to connected Node instances
- * @param serializedFlow - The serialized flow object
- * @returns The starting node of the recreated flow
+ * Checks if a node is a trigger node by looking for start/stop methods
  */
-export const deserializeFlow = (serializedFlow: SerializedFlow): Node => {
+const isTriggerNode = (node: Node): boolean => {
+    return typeof (node as any).start === 'function' && typeof (node as any).stop === 'function';
+};
+
+/**
+ * Deserializes a flow from JSON format back to connected Node instances with flow control
+ * @param serializedFlow - The serialized flow object
+ * @returns Object containing trigger nodes, all nodes, and flow control methods
+ */
+export const deserializeFlow = (serializedFlow: SerializedFlow): DeserializedFlow => {
     const nodeMap = new Map<string, Node>();
 
     // First pass: create all nodes
@@ -158,21 +199,49 @@ export const deserializeFlow = (serializedFlow: SerializedFlow): Node => {
         });
     });
 
-    // Return the start node
-    const startNode = nodeMap.get(serializedFlow.startNode);
-    if (!startNode) {
-        throw new Error(`Start node not found: ${serializedFlow.startNode}`);
-    }
+    // Get all trigger nodes
+    const triggerNodes = serializedFlow.startNodes.map(triggerNodeName => {
+        const triggerNode = nodeMap.get(triggerNodeName);
+        if (!triggerNode) {
+            throw new Error(`Trigger node not found: ${triggerNodeName}`);
+        }
+        return triggerNode;
+    });
 
-    return startNode;
-};
+    return {
+        triggerNodes,
+        allNodes: nodeMap,
+        getNode: (name: string) => nodeMap.get(name),
 
-/**
- * Convenience function that takes a JSON string and returns the starting node of a recreated flow
- * @param jsonString - A JSON string representing a serialized flow
- * @returns The starting node of the recreated flow
- */
-export const flowFromJson = (jsonString: string): Node => {
-    const serializedFlow: SerializedFlow = JSON.parse(jsonString);
-    return deserializeFlow(serializedFlow);
+        startFlow: () => {
+            triggerNodes.forEach(node => {
+                if (typeof (node as any).start === 'function') {
+                    (node as any).start();
+                }
+            });
+        },
+
+        stopFlow: () => {
+            console.log("Stopping trigger:", triggerNodes.map(n => n.name).join(", "));
+            triggerNodes.forEach(node => {
+                if (typeof (node as any).stop === 'function') {
+                    (node as any).stop();
+                }
+            });
+        },
+
+        startTrigger: (nodeName: string) => {
+            const node = nodeMap.get(nodeName);
+            if (node && typeof (node as any).start === 'function') {
+                (node as any).start();
+            }
+        },
+
+        stopTrigger: (nodeName: string) => {
+            const node = nodeMap.get(nodeName);
+            if (node && typeof (node as any).stop === 'function') {
+                (node as any).stop();
+            }
+        }
+    };
 };

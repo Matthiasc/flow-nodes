@@ -1,4 +1,4 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type TriggerNodeCreationFn, type TriggerNode } from "../../lib/create-node.ts";
 import chokidar from "chokidar";
 import { stat } from "fs/promises";
 import path from "path";
@@ -7,7 +7,7 @@ interface WatchFileNodeProps {
   filePath: string;
 }
 
-export const createWatchFileNode: NodeCreationFn<WatchFileNodeProps> = (name, props) => {
+export const createWatchFileNode: TriggerNodeCreationFn<WatchFileNodeProps> = (name, props) => {
   if (!props || !props.filePath) {
     throw new Error('Watch file node requires filePath property');
   }
@@ -20,48 +20,60 @@ export const createWatchFileNode: NodeCreationFn<WatchFileNodeProps> = (name, pr
     type: "watchFileNode",
     name,
     process,
+    properties: { filePath }
   });
 
-  const watcher = chokidar.watch(filePath, {
-    persistent: true,
-    ignoreInitial: true,
-    // awaitWriteFinish: {
-    //   stabilityThreshold: 1000,
-    //   pollInterval: 100,
-    // },
-  });
+  let watcher: any = null;
+  let isWatching = false;
 
-  watcher
-    .on("all", async (eventType, fileName) => {
-      if (!fileName) {
-        n.log.warn("fileName not provided in event");
-        return;
-      }
+  function start() {
+    if (!isWatching) {
+      watcher = chokidar.watch(filePath, {
+        persistent: true,
+        ignoreInitial: true,
+      });
 
-      try {
-        const fileSize = await stat(filePath);
+      watcher
+        .on("all", async (eventType: string, fileName: string) => {
+          if (!fileName) {
+            n.log.warn("fileName not provided in event");
+            return;
+          }
 
-        n.process({
-          msg: {
-            payload: filePath,
-            fileName,
-            filePath,
-            fileSize,
-            eventType,
-          },
+          try {
+            const fileSize = await stat(filePath);
+
+            n.process({
+              msg: {
+                payload: filePath,
+                fileName,
+                filePath,
+                fileSize,
+                eventType,
+              },
+            });
+          } catch (error) {
+            n.log.error(`Error handling file change: ${error}`);
+          }
+        })
+        .on("error", (error: any) => {
+          n.log.error(`Watcher error: ${error}`);
         });
-      } catch (error) {
-        n.log.error(`Error handling file change: ${error}`);
-      }
-    })
-    .on("error", (error) => {
-      n.log.error(`Watcher error: ${error}`);
-    });
 
-  // n.onDestroy = () => {
-  //   watcher.close();
-  //   n.log.info("Stopped watching file");
-  // };
+      isWatching = true;
+    }
+  }
 
-  return n;
+  function stop() {
+    if (isWatching && watcher) {
+      watcher.close();
+      watcher = null;
+      isWatching = false;
+    }
+  }
+
+  // All triggers start stopped - use flow control to start
+  // start() must be called explicitly
+
+  return { ...n, start, stop, isRunning: () => isWatching } as TriggerNode;
 };

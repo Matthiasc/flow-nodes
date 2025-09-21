@@ -3,22 +3,22 @@
  */
 import "dotenv/config";
 
-import { createHttpRequestNode } from "../src/nodes/create-http-request-node.ts";
-import { createDebuggerNode } from "../src/nodes/create-debugger-node.ts";
-import { createDelayNode } from "../src/nodes/flow/create-delay-node.ts";
-import { createRandomNumberNode } from "../src/nodes/create-random-number-node.ts";
-import { createPassThroughNode } from "../src/nodes/flow/create-passthrough-node.ts";
-import { createHtmlSelectorNode } from "../src/nodes/create-html-selector-node.ts";
-import { createBatchNode } from "../src/nodes/flow/create-batch-node.ts";
-import { createTemplateNode } from "../src/nodes/create-template-node.ts";
-import { createWriteFileNode } from "../src/nodes/storage/create-write-file-node.ts";
-import { createWatchFileNode } from "../src/nodes/storage/create-watch-file-node.ts";
-import { createReadFileNode } from "../src/nodes/storage/create-read-file-node.ts";
-import { createRateLimitingNode } from "../src/nodes/flow/create-rate-limiting-node.ts";
-import { createFunctionNode } from "../src/nodes/create-function-node.ts";
-import { createSendSimpleMailNode } from "../src/nodes/create-send-simple-mail-node.ts";
-import { createCronNode } from "../src/nodes/create-cron-node.ts";
-import { nodeToFlowJson } from "../src/lib/serialize-flow.ts";
+import { createHttpRequestNode } from "../src/nodes/create-http-request-node.js";
+import { createDebuggerNode } from "../src/nodes/create-debugger-node.js";
+import { createDelayNode } from "../src/nodes/flow/create-delay-node.js";
+import { createRandomNumberNode } from "../src/nodes/create-random-number-node.js";
+import { createPassThroughNode } from "../src/nodes/flow/create-passthrough-node.js";
+import { createHtmlSelectorNode } from "../src/nodes/create-html-selector-node.js";
+import { createBatchNode } from "../src/nodes/flow/create-batch-node.js";
+import { createTemplateNode } from "../src/nodes/create-template-node.js";
+import { createWriteFileNode } from "../src/nodes/storage/create-write-file-node.js";
+import { createWatchFileNode } from "../src/nodes/storage/create-watch-file-node.js";
+import { createReadFileNode } from "../src/nodes/storage/create-read-file-node.js";
+import { createRateLimitingNode } from "../src/nodes/flow/create-rate-limiting-node.js";
+import { createFunctionNode } from "../src/nodes/create-function-node.js";
+import { createSendSimpleMailNode } from "../src/nodes/create-send-simple-mail-node.js";
+import { createCronNode } from "../src/nodes/create-cron-node.js";
+import { serializeNodes } from "../src/lib/serialize-flow.js";
 
 /**
  * create the nodes
@@ -155,8 +155,8 @@ setInterval(() => {
  */
 console.log("\n=== Flow Serialization Test ===");
 console.log("Serializing flow starting from nRateLimitingNode:");
-console.log(nodeToFlowJson(nRateLimitingNode));
+console.log(serializeNodes([nRateLimitingNode]));
 
 console.log("\n=== Simple Flow Test ===");
 console.log("Serializing flow starting from nRandomNumber1:");
-console.log(nodeToFlowJson(nRandomNumber1));
+console.log(serializeNodes([nRandomNumber1]));

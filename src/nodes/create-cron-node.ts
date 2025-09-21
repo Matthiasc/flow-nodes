@@ -6,15 +6,14 @@
 //and also changes in the processConnected function to handle nodes that can start flows on their own
 //or we could use an event emitter pattern where the cron node emits an event that other nodes can listen to and start processing
 import { CronJob } from 'cron';
-import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type TriggerNodeCreationFn, type TriggerNode } from "../lib/create-node.ts";
 
 export type CronNodeProps = {
     cronTime: string;
-    autoStart?: boolean;
 };
 
-export const createCronNode: NodeCreationFn<CronNodeProps> = (name, props = { cronTime: '* * * * * *' }) => {
-    const { cronTime, autoStart = true } = props;
+export const createCronNode: TriggerNodeCreationFn<CronNodeProps> = (name, props = { cronTime: '* * * * * *' }) => {
+    const { cronTime } = props;
 
     const process: ProcessFn = async ({ msg, log, globals }) => {
         //just forwarding the message
@@ -25,41 +24,44 @@ export const createCronNode: NodeCreationFn<CronNodeProps> = (name, props = { cr
         type: "cronNode",
         name,
         process,
-        properties: { cronTime, autoStart }
+        properties: { cronTime }
     })
 
     const job = CronJob.from({
         cronTime,
         onTick: () => {
+            console.log('Cron job triggered for node', name);
             node.process({
                 msg: {
                     payload: {
                         name,
                         timestamp: Date.now(),
-                        nextDate: job.nextDate()
+                        // nextDate: job.nextDate()
                     }
                 }
             });
         },
-        start: autoStart,
+        start: false, // Always stopped
     });
+
+
 
     // console.log(job)
     function start() {
-        if (!job.isActive) {
-            job.start();
-        }
+        // if (!job.isActive) {
+        job.start();
+        // }
     }
 
     function stop() {
-        if (job.isActive) {
-            job.stop();
-        }
+        // if (job.isActive) {
+        job.stop();
+        // }
     }
 
     function isRunning() {
         return job.isActive;
     }
 
-    return { ...node, start, stop, isRunning };
+    return { ...node, start, stop, isRunning } as TriggerNode;
 };

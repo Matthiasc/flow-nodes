@@ -4,8 +4,28 @@ import { createLogger, type LogEntry, type Logger } from "./create-logger.ts";
 export type Node = any;
 export type Msg = { payload?: any; log?: LogEntry[];[key: string]: any };
 
+// Base node interface
+export interface BaseNode {
+  name: string;
+  type: string;
+  properties: Record<string, any>;
+  to: (nodes: Node | Node[]) => Node;
+  children: () => Node[];
+  nodeTree: () => any;
+  process: (args: { msg: Msg; globals?: Globals }) => void;
+  log: Logger;
+}
+
+// Trigger node interface (extends BaseNode with start/stop/isRunning)
+export interface TriggerNode extends BaseNode {
+  start: () => void;
+  stop: () => void;
+  isRunning: () => boolean;
+}
+
 // Type for node creation with positional name + props object
-export type NodeCreationFn<T = any> = (name: string, props?: T) => Node;
+export type NodeCreationFn<T = any> = (name: string, props?: T) => BaseNode;
+export type TriggerNodeCreationFn<T = any> = (name: string, props?: T) => TriggerNode;
 
 export type ProcessFn = ({
   msg,

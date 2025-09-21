@@ -16,7 +16,7 @@ describe('createCronNode', () => {
 
         const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *',
-            autoStart: false
+
         });
 
         const testNode = createNode({
@@ -40,7 +40,7 @@ describe('createCronNode', () => {
     it('should start and stop the cron job', () => {
         const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *',
-            autoStart: false
+
         });
 
         expect(cronNode.isRunning()).toBe(false);
@@ -52,35 +52,14 @@ describe('createCronNode', () => {
         expect(cronNode.isRunning()).toBe(false);
     });
 
-    it('should auto-start when autoStart is true', () => {
+    it('should not be running', () => {
         const cronNode = createCronNode('test-cron', {
             cronTime: '* * * * * *',
-            autoStart: true
-        });
 
-        expect(cronNode.isRunning()).toBe(true);
-        cronNode.stop(); // Clean up
-    });
-
-    it('should not auto-start when autoStart is false', () => {
-        const cronNode = createCronNode('test-cron', {
-            cronTime: '* * * * * *',
-            autoStart: false
         });
 
         expect(cronNode.isRunning()).toBe(false);
     });
-
-    it('should use default autoStart value of true', () => {
-        const cronNode = createCronNode('test-cron', {
-            cronTime: '* * * * * *'
-            // autoStart not specified, should default to true
-        });
-
-        expect(cronNode.isRunning()).toBe(true);
-        cronNode.stop(); // Clean up
-    });
-
 
 
 

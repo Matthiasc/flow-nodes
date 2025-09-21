@@ -8,7 +8,7 @@ export default defineConfig({
     // Exclude test files from compilation
     "!src/**/*.test.ts"
   ],
-  outDir: "lib",
+  outDir: "dist",
   format: ["esm"],
   dts: true,
   clean: true,
