@@ -1,7 +1,7 @@
 export { createNode } from "./lib/create-node.ts";
 export { createLogger } from "./lib/create-logger.ts";
 export { createGlobals } from "./lib/create-globals.ts";
-export { serializeFlow, flowToJson, nodeToFlowJson, type SerializedFlow, type SerializedNode } from "./lib/serialize-flow.ts";
+export { serializeFlow, flowToJson, nodeToFlowJson, deserializeFlow, flowFromJson, type SerializedFlow, type SerializedNode } from "./lib/serialize-flow.ts";
 
 //flow
 export { createBatchNode } from "./nodes/flow/create-batch-node.ts";
@@ -24,3 +24,4 @@ export { createHttpRequestNode } from "./nodes/create-http-request-node.ts";
 export { createRandomNumberNode } from "./nodes/create-random-number-node.ts";
 export { createSendSimpleMailNode } from "./nodes/create-send-simple-mail-node.ts";
 export { createTemplateNode } from "./nodes/create-template-node.ts";
+export { createCronNode } from "./nodes/create-cron-node.ts";

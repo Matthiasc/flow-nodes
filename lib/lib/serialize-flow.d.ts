@@ -31,5 +31,17 @@ declare const flowToJson: (flow: SerializedFlow) => string;
  * @returns A formatted JSON string representing the entire flow
  */
 declare const nodeToFlowJson: (startNode: Node) => string;
+/**
+ * Deserializes a flow from JSON format back to connected Node instances
+ * @param serializedFlow - The serialized flow object
+ * @returns The starting node of the recreated flow
+ */
+declare const deserializeFlow: (serializedFlow: SerializedFlow) => Node;
+/**
+ * Convenience function that takes a JSON string and returns the starting node of a recreated flow
+ * @param jsonString - A JSON string representing a serialized flow
+ * @returns The starting node of the recreated flow
+ */
+declare const flowFromJson: (jsonString: string) => Node;
 
-export { type SerializedFlow, type SerializedNode, flowToJson, nodeToFlowJson, serializeFlow };
+export { type SerializedFlow, type SerializedNode, deserializeFlow, flowFromJson, flowToJson, nodeToFlowJson, serializeFlow };

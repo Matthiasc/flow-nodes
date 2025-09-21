@@ -1,7 +1,7 @@
 export { createNode } from './lib/create-node.js';
 export { createLogger } from './lib/create-logger.js';
 export { createGlobals } from './lib/create-globals.js';
-export { SerializedFlow, SerializedNode, flowToJson, nodeToFlowJson, serializeFlow } from './lib/serialize-flow.js';
+export { SerializedFlow, SerializedNode, deserializeFlow, flowFromJson, flowToJson, nodeToFlowJson, serializeFlow } from './lib/serialize-flow.js';
 export { createBatchNode } from './nodes/flow/create-batch-node.js';
 export { createDelayNode } from './nodes/flow/create-delay-node.js';
 export { createPassThroughNode } from './nodes/flow/create-passthrough-node.js';
@@ -16,3 +16,4 @@ export { createHttpRequestNode } from './nodes/create-http-request-node.js';
 export { createRandomNumberNode } from './nodes/create-random-number-node.js';
 export { createSendSimpleMailNode } from './nodes/create-send-simple-mail-node.js';
 export { createTemplateNode } from './nodes/create-template-node.js';
+export { createCronNode } from './nodes/create-cron-node.js';

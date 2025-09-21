@@ -66,10 +66,8 @@ const nRateLimitingNode = createRateLimitingNode("rateLimitingNode", {
 const nBatchNode = createBatchNode("batchNode1", { numberOfMessages: 5 });
 
 const nTemplateNode = createTemplateNode("templateNode1", {
-
   template: `<h1>test template<h1/>
             <p><%= msg.payload %></p>`
-
 });
 
 const nWriteToFile = createWriteFileNode("writeToFileNode1", {
