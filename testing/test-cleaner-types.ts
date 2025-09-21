@@ -1,15 +1,15 @@
 import {
-    type NodeCreationFn,
-    type TriggerNodeCreationFn,
+    type NodeFactory,
+    type TriggerNodeFactory,
     createCronNode,
     createDebuggerNode
 } from "../src/index.js";
 
 // ✨ BEFORE: Confusing boolean flag
-// const createCronNode: NodeCreationFn<CronNodeProps, true> = ...  😕
+// const createCronNode: NodeFactory<CronNodeProps, true> = ...  😕
 
 // ✨ AFTER: Crystal clear intent
-// const createCronNode: TriggerNodeCreationFn<CronNodeProps> = ...  😍
+// const createCronNode: TriggerNodeFactory<CronNodeProps> = ...  😍
 
 console.log("=== TypeScript Clarity Improvement ===");
 
@@ -18,12 +18,12 @@ const cronNode = createCronNode("cron", { cronTime: "0 */5 * * * *" });
 const debugNode = createDebuggerNode("debug");
 
 // TypeScript knows exactly what methods are available:
-console.log("✅ Cron node (TriggerNodeCreationFn):");
+console.log("✅ Cron node (TriggerNodeFactory):");
 console.log("  - Has start():", typeof cronNode.start === 'function');
 console.log("  - Has stop():", typeof cronNode.stop === 'function');
 console.log("  - Has isRunning():", typeof cronNode.isRunning === 'function');
 
-console.log("\n✅ Debug node (NodeCreationFn):");
+console.log("\n✅ Debug node (NodeFactory):");
 console.log("  - Has start():", typeof (debugNode as any).start === 'function');
 console.log("  - Has stop():", typeof (debugNode as any).stop === 'function');
 console.log("  - Has isRunning():", typeof (debugNode as any).isRunning === 'function');

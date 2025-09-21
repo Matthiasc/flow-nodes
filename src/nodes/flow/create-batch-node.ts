@@ -1,10 +1,10 @@
-import { createNode, type ProcessFn, type NodeCreationFn, type Msg } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory, type Msg } from "../../lib/create-node.ts";
 
 export type BatchNodeProps = {
   numberOfMessages?: number;
 };
 
-export const createBatchNode: NodeCreationFn<BatchNodeProps> = (name, props = {}) => {
+export const createBatchNode: NodeFactory<BatchNodeProps> = (name, props = {}) => {
   const { numberOfMessages = 10 } = props;
   const messages: Msg[] = [];
 

@@ -1,4 +1,4 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../lib/create-node.ts";
 //@ts-ignore
 import * as ejs from "ejs";
 
@@ -6,7 +6,7 @@ export type TemplateNodeProps = {
   template?: string;
 };
 
-export const createTemplateNode: NodeCreationFn<TemplateNodeProps> = (name, props = {}) => {
+export const createTemplateNode: NodeFactory<TemplateNodeProps> = (name, props = {}) => {
   const { template = "test template <%= msg.payload %>" } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
     try {

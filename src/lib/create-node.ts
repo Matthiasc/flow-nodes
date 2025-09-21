@@ -24,8 +24,8 @@ export interface TriggerNode extends BaseNode {
 }
 
 // Type for node creation with positional name + props object
-export type NodeCreationFn<T = any> = (name: string, props?: T) => BaseNode;
-export type TriggerNodeCreationFn<T = any> = (name: string, props?: T) => TriggerNode;
+export type NodeFactory<T = any> = (name: string, props?: T) => BaseNode;
+export type TriggerNodeFactory<T = any> = (name: string, props?: T) => TriggerNode;
 
 export type ProcessFn = ({
   msg,

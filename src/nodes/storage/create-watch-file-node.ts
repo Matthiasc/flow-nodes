@@ -1,4 +1,4 @@
-import { createNode, type ProcessFn, type TriggerNodeCreationFn, type TriggerNode } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type TriggerNodeFactory, type TriggerNode } from "../../lib/create-node.ts";
 import chokidar from "chokidar";
 import { stat } from "fs/promises";
 import path from "path";
@@ -7,7 +7,7 @@ interface WatchFileNodeProps {
   filePath: string;
 }
 
-export const createWatchFileNode: TriggerNodeCreationFn<WatchFileNodeProps> = (name, props) => {
+export const createWatchFileNode: TriggerNodeFactory<WatchFileNodeProps> = (name, props) => {
   if (!props || !props.filePath) {
     throw new Error('Watch file node requires filePath property');
   }

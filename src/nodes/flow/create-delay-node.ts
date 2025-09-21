@@ -1,10 +1,10 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../../lib/create-node.ts";
 
 export type DelayNodeProps = {
   delay?: number;
 };
 
-export const createDelayNode: NodeCreationFn<DelayNodeProps> = (name, props = {}) => {
+export const createDelayNode: NodeFactory<DelayNodeProps> = (name, props = {}) => {
   const { delay = 1000 } = props;
 
   const process: ProcessFn = async ({ msg, log, globals }) => {

@@ -1,10 +1,10 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../lib/create-node.ts";
 
 interface FunctionNodeProps {
   func: ProcessFn;
 }
 
-export const createFunctionNode: NodeCreationFn<FunctionNodeProps> = (name, props) => {
+export const createFunctionNode: NodeFactory<FunctionNodeProps> = (name, props) => {
   if (!props || !props.func) {
     throw new Error('Function node requires a func property');
   }

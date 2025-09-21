@@ -1,4 +1,4 @@
-import { type Node } from "./create-node.ts";
+import { type Node, type NodeFactory } from "./create-node.ts";
 import { createBatchNode } from "../nodes/flow/create-batch-node.ts";
 import { createDelayNode } from "../nodes/flow/create-delay-node.ts";
 import { createPassThroughNode } from "../nodes/flow/create-passthrough-node.ts";
@@ -128,34 +128,35 @@ export const serializeNodes = (nodes: Node[]): string => {
 /**
  * Convenience function that takes a JSON string and returns the deserialized flow
  * @param jsonString - A JSON string representing a serialized flow
- * @param customFactories - Optional custom node factories for external node types
+ * @param customFactories - Optional custom node factories (array of factory functions)
  * @returns Object containing trigger nodes, all nodes, and flow control methods
  */
-export const deserializeNodes = (jsonString: string, customFactories?: Record<string, NodeFactory>): DeserializedFlow => {
+export const deserializeNodes = (
+    jsonString: string, 
+    customFactories: NodeFactory[] = []
+): DeserializedFlow => {
     const serializedFlow: SerializedFlow = JSON.parse(jsonString);
     return deserializeFlow(serializedFlow, customFactories);
 };
 
-// Node factory mapping
-export type NodeFactory = (name: string, properties?: any) => Node;
-
-const nodeFactories: Record<string, NodeFactory> = {
-    'batchNode': createBatchNode,
-    'delayNode': createDelayNode,
-    'passThroughNode': createPassThroughNode,
-    'rateLimitingNode': createRateLimitingNode,
-    'readFileNode': createReadFileNode,
-    'writeFileNode': createWriteFileNode,
-    'watchFileNode': createWatchFileNode,
-    'debuggerNode': createDebuggerNode,
-    'functionNode': createFunctionNode,
-    'htmlSelectorNode': createHtmlSelectorNode,
-    'httpRequestNode': createHttpRequestNode,
-    'randomNumberNode': createRandomNumberNode,
-    'sendSimpleMailNode': createSendSimpleMailNode,
-    'templateNode': createTemplateNode,
-    'cronNode': createCronNode,
-};
+// Built-in factories - auto-discovery approach (no manual mapping needed!)
+const builtInFactories: NodeFactory[] = [
+    createBatchNode,
+    createDelayNode,
+    createPassThroughNode,
+    createRateLimitingNode,
+    createReadFileNode,
+    createWriteFileNode,
+    createWatchFileNode,
+    createDebuggerNode,
+    createFunctionNode,
+    createHtmlSelectorNode,
+    createHttpRequestNode,
+    createRandomNumberNode,
+    createSendSimpleMailNode,
+    createTemplateNode,
+    createCronNode,
+];
 
 /**
  * Checks if a node is a trigger node by looking for start/stop methods
@@ -165,20 +166,64 @@ const isTriggerNode = (node: Node): boolean => {
 };
 
 /**
+ * Helper function to auto-discover node types by creating temporary nodes
+ * Includes duplicate detection and handling
+ */
+const buildFactoryMap = (factories: NodeFactory[]): Record<string, NodeFactory> => {
+    const factoryMap: Record<string, NodeFactory> = {};
+    const typeToFactoryName: Record<string, string> = {};
+    
+    factories.forEach(factory => {
+        try {
+            // Create a temporary node to discover its type
+            const tempNode = factory('__temp__', {});
+            const nodeType = tempNode.type;
+            
+            // Check for duplicate types
+            if (factoryMap[nodeType]) {
+                const existingFactoryName = typeToFactoryName[nodeType];
+                const currentFactoryName = factory.name || 'anonymous';
+                
+                console.warn(
+                    `Duplicate node type "${nodeType}" detected:\n` +
+                    `  - Existing factory: ${existingFactoryName}\n` +
+                    `  - New factory: ${currentFactoryName}\n` +
+                    `  - Using the new factory (${currentFactoryName}) - it will override the existing one`
+                );
+            }
+            
+            // Store the factory (later ones override earlier ones)
+            factoryMap[nodeType] = factory;
+            typeToFactoryName[nodeType] = factory.name || 'anonymous';
+            
+        } catch (error) {
+            const factoryName = factory.name || 'anonymous';
+            console.warn(`Failed to auto-discover node type for factory "${factoryName}":`, error);
+        }
+    });
+    
+    return factoryMap;
+};
+
+/**
  * Deserializes a flow from JSON format back to connected Node instances with flow control
  * @param serializedFlow - The serialized flow object
- * @param customFactories - Optional custom node factories for external node types
+ * @param customFactories - Optional custom node factories (array of factory functions)
  * @returns Object containing trigger nodes, all nodes, and flow control methods
  */
-export const deserializeFlow = (serializedFlow: SerializedFlow, customFactories?: Record<string, NodeFactory>): DeserializedFlow => {
+export const deserializeFlow = (
+    serializedFlow: SerializedFlow, 
+    customFactories: NodeFactory[] = []
+): DeserializedFlow => {
     const nodeMap = new Map<string, Node>();
-
-    // Merge built-in factories with custom ones (custom ones take precedence)
-    const allFactories = { ...nodeFactories, ...customFactories };
-
+    
+    // Combine built-in and custom factories, then auto-discover their types
+    const allFactories = [...builtInFactories, ...customFactories];
+    const factoryMap = buildFactoryMap(allFactories);
+    
     // First pass: create all nodes
     serializedFlow.nodes.forEach(serializedNode => {
-        const factory = allFactories[serializedNode.type];
+        const factory = factoryMap[serializedNode.type];
         if (!factory) {
             throw new Error(`Unknown node type: ${serializedNode.type}`);
         }

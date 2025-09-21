@@ -1,8 +1,8 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../../lib/create-node.ts";
 
 export type PassThroughNodeProps = {};
 
-export const createPassThroughNode: NodeCreationFn<PassThroughNodeProps> = (name, props = {}) => {
+export const createPassThroughNode: NodeFactory<PassThroughNodeProps> = (name, props = {}) => {
   let count = 0;
   const process: ProcessFn = async ({ msg, log, globals }) => {
     count++;

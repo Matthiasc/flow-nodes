@@ -1,11 +1,11 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../lib/create-node.ts";
 
 export type HttpRequestNodeProps = {
   url?: string;
   onProcessed?: (msg: any) => any;
 };
 
-export const createHttpRequestNode: NodeCreationFn<HttpRequestNodeProps> = (name, props = {}) => {
+export const createHttpRequestNode: NodeFactory<HttpRequestNodeProps> = (name, props = {}) => {
   const { url, onProcessed } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
     // @ts-ignore

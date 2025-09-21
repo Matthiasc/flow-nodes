@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { createNode, type ProcessFn, type NodeCreationFn } from "../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../lib/create-node.ts";
 import { } from "nodemailer";
 
 type MailOptions = {
@@ -21,7 +21,7 @@ interface SendSimpleMailNodeProps {
   mailOptions?: MailOptions;
 }
 
-export const createSendSimpleMailNode: NodeCreationFn<SendSimpleMailNodeProps> = (name, props) => {
+export const createSendSimpleMailNode: NodeFactory<SendSimpleMailNodeProps> = (name, props) => {
   if (!props || !props.smtpConfig) {
     throw new Error('Send simple mail node requires smtpConfig property');
   }

@@ -1,4 +1,4 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../../lib/create-node.ts";
 
 export type RateLimitingNodeProps = {
   limit?: number;
@@ -9,7 +9,7 @@ export type RateLimitingNodeProps = {
  *
  * Will drop messages when the rate limit is exceeded.
  */
-export const createRateLimitingNode: NodeCreationFn<RateLimitingNodeProps> = (name, props = {}) => {
+export const createRateLimitingNode: NodeFactory<RateLimitingNodeProps> = (name, props = {}) => {
   const { limit = 1, interval = 1000 } = props;
   let calls = 0;
   let lastReset = Date.now();

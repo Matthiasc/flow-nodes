@@ -1,4 +1,4 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../../lib/create-node.ts";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -9,7 +9,7 @@ interface WriteFileNodeProps {
   newline?: boolean;
 }
 
-export const createWriteFileNode: NodeCreationFn<WriteFileNodeProps> = (name, props) => {
+export const createWriteFileNode: NodeFactory<WriteFileNodeProps> = (name, props) => {
   if (!props || !props.filePath) {
     throw new Error('Write file node requires filePath property');
   }

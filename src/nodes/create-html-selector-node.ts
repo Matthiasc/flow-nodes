@@ -1,11 +1,11 @@
 import * as cheerio from "cheerio";
-import { createNode, type NodeCreationFn, type ProcessFn } from "../lib/create-node.ts";
+import { createNode, type NodeFactory, type ProcessFn } from "../lib/create-node.ts";
 
 export type HtmlSelectorNodeProps = {
   selector: string;
 };
 
-export const createHtmlSelectorNode: NodeCreationFn<HtmlSelectorNodeProps> = (name, props) => {
+export const createHtmlSelectorNode: NodeFactory<HtmlSelectorNodeProps> = (name, props) => {
   if (!props || !props.selector) {
     throw new Error('HTML selector node requires a selector property');
   }

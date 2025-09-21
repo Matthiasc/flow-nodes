@@ -1,4 +1,4 @@
-import { createNode, type ProcessFn, type NodeCreationFn } from "../../lib/create-node.ts";
+import { createNode, type ProcessFn, type NodeFactory } from "../../lib/create-node.ts";
 import { readFile } from "fs/promises";
 
 export type ReadFileNodeProps = {
@@ -6,7 +6,7 @@ export type ReadFileNodeProps = {
   encoding?: BufferEncoding;
 };
 
-export const createReadFileNode: NodeCreationFn<ReadFileNodeProps> = (name, props = {}) => {
+export const createReadFileNode: NodeFactory<ReadFileNodeProps> = (name, props = {}) => {
   let { filePath, encoding = "utf-8" } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
     filePath = msg.payload || filePath;
