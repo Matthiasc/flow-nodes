@@ -1,7 +1,7 @@
 export { createNode, type BaseNode, type TriggerNode, type NodeCreationFn, type TriggerNodeCreationFn } from "./lib/create-node.ts";
 export { createLogger } from "./lib/create-logger.ts";
 export { createGlobals } from "./lib/create-globals.ts";
-export { serializeFlow, flowToJson, serializeNodes, deserializeFlow, deserializeNodes, type SerializedFlow, type SerializedNode, type DeserializedFlow } from "./lib/serialize-flow.ts";
+export { serializeFlow, flowToJson, serializeNodes, deserializeFlow, deserializeNodes, type SerializedFlow, type SerializedNode, type DeserializedFlow, type NodeFactory } from "./lib/serialize-flow.ts";
 
 //flow
 export { createBatchNode } from "./nodes/flow/create-batch-node.ts";

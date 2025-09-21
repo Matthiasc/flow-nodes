@@ -128,15 +128,16 @@ export const serializeNodes = (nodes: Node[]): string => {
 /**
  * Convenience function that takes a JSON string and returns the deserialized flow
  * @param jsonString - A JSON string representing a serialized flow
+ * @param customFactories - Optional custom node factories for external node types
  * @returns Object containing trigger nodes, all nodes, and flow control methods
  */
-export const deserializeNodes = (jsonString: string): DeserializedFlow => {
+export const deserializeNodes = (jsonString: string, customFactories?: Record<string, NodeFactory>): DeserializedFlow => {
     const serializedFlow: SerializedFlow = JSON.parse(jsonString);
-    return deserializeFlow(serializedFlow);
+    return deserializeFlow(serializedFlow, customFactories);
 };
 
 // Node factory mapping
-type NodeFactory = (name: string, properties?: any) => Node;
+export type NodeFactory = (name: string, properties?: any) => Node;
 
 const nodeFactories: Record<string, NodeFactory> = {
     'batchNode': createBatchNode,
@@ -166,14 +167,18 @@ const isTriggerNode = (node: Node): boolean => {
 /**
  * Deserializes a flow from JSON format back to connected Node instances with flow control
  * @param serializedFlow - The serialized flow object
+ * @param customFactories - Optional custom node factories for external node types
  * @returns Object containing trigger nodes, all nodes, and flow control methods
  */
-export const deserializeFlow = (serializedFlow: SerializedFlow): DeserializedFlow => {
+export const deserializeFlow = (serializedFlow: SerializedFlow, customFactories?: Record<string, NodeFactory>): DeserializedFlow => {
     const nodeMap = new Map<string, Node>();
+
+    // Merge built-in factories with custom ones (custom ones take precedence)
+    const allFactories = { ...nodeFactories, ...customFactories };
 
     // First pass: create all nodes
     serializedFlow.nodes.forEach(serializedNode => {
-        const factory = nodeFactories[serializedNode.type];
+        const factory = allFactories[serializedNode.type];
         if (!factory) {
             throw new Error(`Unknown node type: ${serializedNode.type}`);
         }
