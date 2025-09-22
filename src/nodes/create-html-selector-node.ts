@@ -3,6 +3,7 @@ import { createNode, type NodeFactory, type ProcessFn } from "../lib/create-node
 
 export type HtmlSelectorNodeProps = {
   selector: string;
+  attribute?: string; // Optional attribute to extract (e.g., 'href', 'src', 'class')
 };
 
 export const createHtmlSelectorNode: NodeFactory<HtmlSelectorNodeProps> = (name, props) => {
@@ -10,7 +11,7 @@ export const createHtmlSelectorNode: NodeFactory<HtmlSelectorNodeProps> = (name,
     throw new Error('HTML selector node requires a selector property');
   }
 
-  const { selector } = props;
+  const { selector, attribute } = props;
 
   const process: ProcessFn = async ({ msg, log, globals }) => {
     if (typeof msg.payload !== "string") {
@@ -27,15 +28,24 @@ export const createHtmlSelectorNode: NodeFactory<HtmlSelectorNodeProps> = (name,
     try {
       const $ = cheerio.load(msg.payload);
       const elements = $(_selector)
-        .map((i, el) => $(el).text().trim())
-        .get();
+        .map((i, el) => {
+          if (attribute) {
+            // Extract the specified attribute
+            return $(el).attr(attribute) || null;
+          } else {
+            // Extract text content (default behavior)
+            return $(el).text().trim();
+          }
+        })
+        .get()
+        .filter(item => item !== null); // Remove null values
 
-      if (!elements) {
+      if (!elements.length) {
         msg.payload = null;
-        return msg; // If no element found, return empty string
+        return msg; // If no element found, return null
       }
 
-      log.info(`Selected ${elements.length} elements`);
+      log.info(`Selected ${elements.length} elements${attribute ? ` (attribute: ${attribute})` : ''}`);
       msg.payload = elements;
 
       return msg;

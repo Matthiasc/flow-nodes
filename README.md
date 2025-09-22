@@ -1,58 +1,276 @@
-# flow-nodes
+# Flow-Nodes 🚀
 
-Experimental / tryout of a flow-based programming with nodes. It lays somewhere between functional programming and node based flows such as NODE-RED. (but then without the graphical interface)
+A powerful, type-safe flow-based programming library for Node.js. Create complex automation workflows by connecting simple, reusable nodes. Perfect for data processing pipelines, web scraping, email automation, file operations, and scheduled tasks.
 
-The idea is to create a set of nodes that can be connected to each other to create a flow.
-A node can be linked to one or more nodes. And one or more nodes can be linked to one node.
-You could create a flow that does something like this:
+## Features ✨
 
-## example
+- **🔗 Visual Flow Programming** - Connect nodes like building blocks
+- **⚡ Trigger Nodes** - Cron jobs, file watchers, and more
+- **🔐 Environment Variables** - Secure credential injection with `{{VARIABLE}}` syntax  
+- **💾 Serialization** - Save/load flows as JSON for persistence
+- **🔄 Flow Control** - Start, stop, and manage complex workflows
+- **📦 Built-in Nodes** - HTTP requests, file operations, email, templates, and more
+- **🛠️ Custom Nodes** - Easy to extend with your own node types
+- **🎯 Type Safe** - Full TypeScript support with excellent IntelliSense
 
-This would create a flow that fetches the content of `https://example.com` and then selects all `h2` elements from the response and logs it to the console.
+## Quick Start
 
-```js
-//create the nodes
+### Installation
 
-const nFetch = createHttpRequestNode({
-  name: "fetchNode1",
-  url: "https://example.com",
-});
-
-const nHtmlSelector = createHtmlSelectorNode({
-  name: "selectorNode1",
-  selector: "h2",
-});
-
-const nDebugger = createDebuggerNode({ name: "debuggerNode1" });
-
-// connect the nodes
-
-nFetch.to(nHtmlSelector).to(nDebugger);
-
-//start the flow
-nFetch.process({ msg: {} });
+```bash
+npm install @matthiasc/flow-nodes
 ```
 
-## connecting nodes
+### Basic Example
 
-```js
-// you can connect one node to another
+```typescript
+import { createHttpRequestNode, createHtmlSelectorNode, createDebuggerNode } from '@matthiasc/flow-nodes';
+
+// Create nodes
+const httpNode = createHttpRequestNode("fetcher", {
+  url: "https://example.com"
+});
+
+const selectorNode = createHtmlSelectorNode("selector", {
+  selector: "h2"
+});
+
+const debugNode = createDebuggerNode("logger");
+
+// Connect the flow
+httpNode.to(selectorNode).to(debugNode);
+
+// Execute
+httpNode.process({ msg: { payload: {} } });
+```
+
+## Core Concepts
+
+### Node Types
+
+**Regular Nodes** - Process data when they receive a message:
+```typescript
+const delayNode = createDelayNode("delay", { delay: 1000 });
+const templateNode = createTemplateNode("template", { template: "Hello {{name}}!" });
+```
+
+**Trigger Nodes** - Start flows automatically:
+```typescript
+const cronNode = createCronNode("scheduler", { 
+  cronTime: "0 */5 * * * *" // Every 5 minutes
+});
+
+const fileWatcher = createWatchFileNode("watcher", {
+  filePath: "./data.txt"
+});
+
+// Start triggers
+cronNode.start();
+fileWatcher.start();
+```
+
+### Environment Variables
+
+Securely inject credentials and configuration:
+
+```typescript
+// Set environment variables
+process.env.SMTP_USER = "user@gmail.com";
+process.env.SMTP_PASS = "app-password";
+
+const emailNode = createSendSimpleMailNode("mailer", {
+  smtpConfig: {
+    service: "gmail",
+    auth: {
+      user: "{{SMTP_USER}}", // Injected at runtime
+      pass: "{{SMTP_PASS}}"  // Templates preserved in serialization
+    }
+  },
+  mailOptions: {
+    from: "{{SMTP_USER}}",
+    to: "recipient@example.com",
+    subject: "Automated Report",
+    message: "Your daily report is ready!"
+  }
+});
+```
+
+### Flow Serialization
+
+Save and restore entire workflows:
+
+```typescript
+import { serializeFlow, deserializeFlow } from '@matthiasc/flow-nodes';
+
+// Create a flow
+const cronNode = createCronNode("daily-report", { cronTime: "0 9 * * *" });
+const emailNode = createSendSimpleMailNode("notify", { /* config */ });
+cronNode.to(emailNode);
+
+// Serialize to JSON
+const flowJson = serializeFlow([cronNode]);
+console.log(JSON.stringify(flowJson, null, 2));
+
+// Later: deserialize and run
+const restoredFlow = deserializeFlow(flowJson);
+restoredFlow.startFlow(); // Starts all trigger nodes
+```
+## Advanced Examples
+
+### Automated Email Reports
+
+```typescript
+import { config } from 'dotenv';
+config(); // Load .env file
+
+const cronNode = createCronNode("daily-report", {
+  cronTime: "0 9 * * *" // 9 AM daily
+});
+
+const dataNode = createReadFileNode("data-reader", {
+  filePath: "./daily-stats.json"
+});
+
+const templateNode = createTemplateNode("email-template", {
+  template: `
+    <h1>Daily Report</h1>
+    <p>Date: <%= new Date().toDateString() %></p>
+    <p>Stats: <%= JSON.stringify(msg.payload) %></p>
+  `
+});
+
+const emailNode = createSendSimpleMailNode("emailer", {
+  smtpConfig: {
+    service: "gmail",
+    auth: {
+      user: "{{GMAIL_USER}}",
+      pass: "{{GMAIL_APP_PASSWORD}}"
+    }
+  },
+  mailOptions: {
+    from: "{{GMAIL_USER}}",
+    to: "manager@company.com",
+    subject: "Daily Report - <%= new Date().toDateString() %>",
+    messageType: "html"
+  }
+});
+
+// Build the flow
+cronNode.to(dataNode).to(templateNode).to(emailNode);
+
+// Start the scheduler
+cronNode.start();
+```
+
+### Web "Scraping"
+
+```typescript
+const scrapeNode = createHttpRequestNode("scraper", {
+  url: "https://news.ycombinator.com"
+});
+
+const extractNode = createHtmlSelectorNode("extractor", {
+  selector: ".titleline > a",
+  attribute: "href"
+});
+const saveNode = createWriteFileNode("saver", {
+  filePath: "./scraped-links.json"
+});
+
+// Rate-limited scraping
+const rateLimitNode = createRateLimitingNode("limiter", {
+  limit: 1,
+  interval: 5000 // 1 request per 5 seconds
+});
+
+// Build pipeline
+scrapeNode
+  .to(rateLimitNode)
+  .to(extractNode)
+  .to(saveNode);
+
+scrapeNode.process({ });
+```
+
+
+## Flow Control API
+
+```typescript
+const flow = deserializeFlow(flowJson);
+
+// Flow-wide controls
+flow.startFlow();  // Start all trigger nodes
+flow.stopFlow();   // Stop all trigger nodes
+
+// Access nodes
+const node = flow.getNode("my-node");
+const allNodes = flow.allNodes;
+const triggers = flow.triggerNodes;
+```
+
+## Node Connection Patterns
+
+```typescript
+// Linear chain
 node1.to(node2).to(node3);
 
-// you can connect one node to multiple nodes
+// One-to-many (fan-out)
+node1.to([node2, node3, node4]);
+
+// Many-to-one (fan-in)
+node1.to(targetNode);
+node2.to(targetNode);
+node3.to(targetNode);
+
+// Complex branching
+cronNode
+  .to(dataNode)
+  .to([processor1, processor2])
+
+processor1.to(emailNode);
+processor2.to(fileNode);
+
+// Loops (use rate limiting!)
 node1.to(node2);
-node1.to(node3);
-
-//or shorter
-node1.to([node2, node3]);
-
-// you can connect multiple nodes to one node
-node1.to(node3);
 node2.to(node3);
-
-// connect nodes in a loop
-// (be careful for infinite loops, incorporate flow altering / limiting nodes)
-node1.to(node2);
-node2.to(node3);
-node3.to(node1);
+node3.to(node1); // Creates a cycle
 ```
+
+## Custom Node Development
+
+```typescript
+import { createNode, type ProcessFn, type NodeFactory } from '@matthiasc/flow-nodes';
+
+type MyNodeProps = {
+  customParam: string;
+};
+
+export const createMyCustomNode: NodeFactory<MyNodeProps> = (name, props) => {
+  const process: ProcessFn = async ({ msg, log, globals }) => {
+    log.info(`Processing in ${name}`);
+    
+    // Your custom logic here
+    return {
+      ...msg,
+      payload: {
+        ...msg.payload,
+        processed: true
+      }
+    };
+  };
+
+  return createNode({
+    type: "myCustomNode",
+    name,
+    process,
+    properties: props
+  });
+};
+
+// Don't forget to set the nodeType for serialization
+createMyCustomNode.nodeType = "myCustomNode";
+```
+
+
+---
+

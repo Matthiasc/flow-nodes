@@ -15,8 +15,7 @@ export const createFunctionNode: NodeFactory<FunctionNodeProps> = (name, props) 
     if (typeof func !== "function") {
       throw new Error("Function is missing");
     }
-    msg.payload = await func({ msg, log, globals });
-    return msg;
+    return await func({ msg, log, globals });
   };
   return createNode({ type: "function", name, process });
 };
