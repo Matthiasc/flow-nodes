@@ -17,10 +17,10 @@ export const createDelayNode: NodeFactory<DelayNodeProps> = (name, props = {}) =
   };
 
   return createNode({
-    type: "delayNode",
+    type: "delay",
     name,
     process,
     properties: { delay }
   });
 };
-createDelayNode.nodeType = "delayNode";
+createDelayNode.nodeType = "delay";

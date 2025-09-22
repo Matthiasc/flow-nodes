@@ -45,10 +45,10 @@ export const createHtmlSelectorNode: NodeFactory<HtmlSelectorNodeProps> = (name,
   };
 
   return createNode({
-    type: "selectorNode",
+    type: "selector",
     name,
     process,
     properties: { selector }
   });
 };
-createHtmlSelectorNode.nodeType = "selectorNode";
+createHtmlSelectorNode.nodeType = "selector";

@@ -56,7 +56,7 @@ const nPassThrough = createPassThroughNode("passThroughNode1");
 
 
 
-const nRateLimitingNode = createRateLimitingNode("rateLimitingNode", {
+const nRateLimitingNode = createRateLimitingNode("rateLimiting", {
 
   limit: 2,
   interval: 2000,

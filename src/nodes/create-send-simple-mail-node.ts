@@ -71,10 +71,10 @@ export const createSendSimpleMailNode: NodeFactory<SendSimpleMailNodeProps> = (n
   };
 
   return createNode({
-    type: "sendMailNode",
+    type: "mail",
     name,
     process,
     properties: props // Keep original props with templates for serialization
   });
 };
-createSendSimpleMailNode.nodeType = "sendMailNode";
+createSendSimpleMailNode.nodeType = "sendMail";

@@ -116,9 +116,9 @@ describe('Trigger Flow Integration Tests', () => {
 
             // Verify cron properties are preserved
             const cronSerialized = parsed.nodes.find((n: any) => n.name === 'test-cron');
-            expect(cronSerialized.type).toBe('cronNode');
+            expect(cronSerialized.type).toBe('cron');
             expect(cronSerialized.properties.cronTime).toBe('0 */10 * * * *');
-            
+
             // Verify cron node is in startNodes (trigger detection)
             expect(parsed.startNodes).toContain('test-cron');
 
@@ -141,11 +141,11 @@ describe('Trigger Flow Integration Tests', () => {
 
             // Check trigger detection in serialized data via startNodes
             expect(parsed.startNodes).toEqual(['cron']); // Only cron should be a trigger
-            
+
             const cronSerialized = parsed.nodes.find((n: any) => n.name === 'cron');
             const delaySerialized = parsed.nodes.find((n: any) => n.name === 'delay');
             const debugSerialized = parsed.nodes.find((n: any) => n.name === 'debug');
-            
+
             // Verify all nodes exist
             expect(cronSerialized).toBeDefined();
             expect(delaySerialized).toBeDefined();

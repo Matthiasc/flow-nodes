@@ -24,10 +24,18 @@ export interface TriggerNode extends BaseNode {
 }
 
 // Type for node creation with positional name + props object
-export type NodeFactory<T = any> = ((name: string, props?: T) => BaseNode) & {
+export type NodeFactory<T = any> = ((
+  /** Unique identifier for this node. User-provided, human-readable name that serves as both ID and label. */
+  name: string,
+  props?: T
+) => BaseNode) & {
   nodeType?: string;
 };
-export type TriggerNodeFactory<T = any> = ((name: string, props?: T) => TriggerNode) & {
+export type TriggerNodeFactory<T = any> = ((
+  /** Unique identifier for this node. User-provided, human-readable name that serves as both ID and label. */
+  name: string,
+  props?: T
+) => TriggerNode) & {
   nodeType?: string;
 };
 

@@ -45,11 +45,11 @@ describe('TypeScript Interface Tests', () => {
 
         it('should have nodeType static properties on factories', () => {
             // All factories should have static nodeType properties
-            expect((createCronNode as any).nodeType).toBe('cronNode');
-            expect((createWatchFileNode as any).nodeType).toBe('watchFileNode');
-            expect((createDebuggerNode as any).nodeType).toBe('debuggerNode');
-            expect((createDelayNode as any).nodeType).toBe('delayNode');
-            expect((createRandomNumberNode as any).nodeType).toBe('randomNumberNode');
+            expect((createCronNode as any).nodeType).toBe('cron');
+            expect((createWatchFileNode as any).nodeType).toBe('watchFile');
+            expect((createDebuggerNode as any).nodeType).toBe('debugger');
+            expect((createDelayNode as any).nodeType).toBe('delay');
+            expect((createRandomNumberNode as any).nodeType).toBe('randomNumber');
         });
     });
 
@@ -146,7 +146,7 @@ describe('TypeScript Interface Tests', () => {
             // These should work with defaults
             const debugNode = createDebuggerNode("minimal-debug"); // No props needed
             expect(debugNode.name).toBe("minimal-debug");
-            expect(debugNode.type).toBe("debuggerNode");
+            expect(debugNode.type).toBe("debugger");
 
             // Optional props should get defaults
             const randomWithDefaults = createRandomNumberNode("default-random", {});

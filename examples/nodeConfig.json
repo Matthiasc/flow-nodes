@@ -3,7 +3,7 @@
         {
             "id": "cronNode1",
             "name": "cronNode1",
-            "type": "cronNode",
+            "type": "cron",
             "properties": {
                 "cronTime": "*/5 * * * * *"
             },
@@ -28,7 +28,7 @@
         {
             "id": "mailNode1",
             "name": "mailNode1",
-            "type": "sendMailNode",
+            "type": "sendMail",
             "properties": {
                 "smtpConfig": {
                     "service": "gmail",

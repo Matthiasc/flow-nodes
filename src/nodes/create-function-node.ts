@@ -18,6 +18,6 @@ export const createFunctionNode: NodeFactory<FunctionNodeProps> = (name, props) 
     msg.payload = await func({ msg, log, globals });
     return msg;
   };
-  return createNode({ type: "functionNode", name, process });
+  return createNode({ type: "function", name, process });
 };
-createFunctionNode.nodeType = "functionNode";
+createFunctionNode.nodeType = "function";

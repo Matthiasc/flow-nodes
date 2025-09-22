@@ -27,10 +27,10 @@ export const createTemplateNode: NodeFactory<TemplateNodeProps> = (name, props =
   };
 
   return createNode({
-    type: "templateNode",
+    type: "template",
     name,
     process,
     properties: { template }
   });
 };
-createTemplateNode.nodeType = "templateNode";
+createTemplateNode.nodeType = "template";

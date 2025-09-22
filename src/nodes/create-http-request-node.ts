@@ -33,10 +33,10 @@ export const createHttpRequestNode: NodeFactory<HttpRequestNodeProps> = (name, p
   };
 
   return createNode({
-    type: "httpRequestNode",
+    type: "httpRequest",
     name,
     process,
     properties: { url, onProcessed }
   });
 };
-createHttpRequestNode.nodeType = "httpRequestNode";
+createHttpRequestNode.nodeType = "httpRequest";

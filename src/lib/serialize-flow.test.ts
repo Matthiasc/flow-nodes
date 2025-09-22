@@ -16,7 +16,7 @@ describe('serialize-flow', () => {
             expect(result).toEqual({
                 nodes: [{
                     name: "test-delay",
-                    type: "delayNode",
+                    type: 'delay',
                     properties: { delay: 500 },
                     connections: []
                 }],
@@ -40,14 +40,14 @@ describe('serialize-flow', () => {
 
             expect(delayNodeSerialized).toEqual({
                 name: "delay",
-                type: "delayNode",
+                type: 'delay',
                 properties: { delay: 1000 },
                 connections: ["debug"]
             });
 
             expect(debugNodeSerialized).toEqual({
                 name: "debug",
-                type: "debuggerNode",
+                type: "debugger",
                 properties: {},
                 connections: []
             });

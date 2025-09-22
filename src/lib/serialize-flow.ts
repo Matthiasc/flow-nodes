@@ -16,6 +16,7 @@ import { createTemplateNode } from "../nodes/create-template-node.ts";
 import { createCronNode } from "../nodes/create-cron-node.ts";
 
 export interface SerializedNode {
+    /** Unique identifier for this node. User-provided, human-readable name that serves as both ID and label. */
     name: string;
     type: string;
     properties: Record<string, any>;

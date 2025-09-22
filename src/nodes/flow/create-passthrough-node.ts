@@ -9,10 +9,10 @@ export const createPassThroughNode: NodeFactory<PassThroughNodeProps> = (name, p
     return msg;
   };
   return createNode({
-    type: "passThroughNode",
+    type: "passThrough",
     name,
     process,
     properties: {}
   });
 };
-createPassThroughNode.nodeType = "passThroughNode";
+createPassThroughNode.nodeType = "passThrough";

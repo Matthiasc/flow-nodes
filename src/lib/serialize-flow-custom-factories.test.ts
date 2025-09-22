@@ -78,8 +78,8 @@ describe('Custom Factories', () => {
         });
 
         it('should handle built-in factories with nodeType properties', () => {
-            expect(createCronNode.nodeType).toBe('cronNode');
-            expect(createRandomNumberNode.nodeType).toBe('randomNumberNode');
+            expect(createCronNode.nodeType).toBe('cron');
+            expect(createRandomNumberNode.nodeType).toBe('randomNumber');
         });
     });
 
@@ -154,9 +154,9 @@ describe('Custom Factories', () => {
             expect(deserialized.triggerNodes[0].name).toBe('cron1');
 
             // All nodes should be properly restored
-            expect(deserialized.getNode('cron1')?.type).toBe('cronNode');
+            expect(deserialized.getNode('cron1')?.type).toBe('cron');
             expect(deserialized.getNode('custom1')?.type).toBe('customTest');
-            expect(deserialized.getNode('random1')?.type).toBe('randomNumberNode');
+            expect(deserialized.getNode('random1')?.type).toBe('randomNumber');
         });
 
         it('should handle multiple custom factories of different types', () => {

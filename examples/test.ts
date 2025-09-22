@@ -46,7 +46,7 @@ const nodesConfiguration = `{
   "nodes": [
     {
       "name": "cronNode1",
-      "type": "cronNode",
+      "type": "cron",
       "properties": {
         "cronTime": "*/5 * * * * *"
       },
@@ -56,7 +56,7 @@ const nodesConfiguration = `{
     },
     {
       "name": "readFileNode1",
-      "type": "readFileNode",
+      "type": "readFile",
       "properties": {
         "filePath": "./test.txt",
         "encoding": "utf-8"
@@ -67,7 +67,7 @@ const nodesConfiguration = `{
     },
     {
       "name": "mailNode1",
-      "type": "sendMailNode",
+      "type": "sendMail",
       "properties": {
         "smtpConfig": {
           "service": "gmail",
@@ -83,6 +83,12 @@ const nodesConfiguration = `{
           "message": "This is a test email."
         }
       },
+      "connections": ["debuggerNode1"]
+    },
+    {
+      "name": "debuggerNode1",
+      "type": "debugger",
+      "properties": {},
       "connections": []
     }
   ],

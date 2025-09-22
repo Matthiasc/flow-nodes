@@ -21,7 +21,7 @@ export const createCronNode: TriggerNodeFactory<CronNodeProps> = (name: string, 
     };
 
     const node = createNode({
-        type: "cronNode",
+        type: "cron",
         name,
         process,
         properties: { cronTime }
@@ -64,4 +64,4 @@ export const createCronNode: TriggerNodeFactory<CronNodeProps> = (name: string, 
     return { ...node, start, stop, isRunning } as TriggerNode;
 }
 
-createCronNode.nodeType = "cronNode";
+createCronNode.nodeType = "cron";

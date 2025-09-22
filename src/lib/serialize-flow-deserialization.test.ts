@@ -16,7 +16,7 @@ describe('serialize-flow enhanced deserialization', () => {
             expect(allNodes.size).toBe(1);
             expect(getNode("test-delay")).toBeDefined();
             expect(getNode("test-delay")?.name).toBe("test-delay");
-            expect(getNode("test-delay")?.type).toBe("delayNode");
+            expect(getNode("test-delay")?.type).toBe('delay');
             expect(getNode("test-delay")?.properties.delay).toBe(500);
 
             // Since delayNode doesn't have start/stop, it shouldn't be a trigger
@@ -159,7 +159,7 @@ describe('serialize-flow enhanced deserialization', () => {
                 nodes: [{
                     id: "test",
                     name: "test",
-                    type: "debuggerNode",
+                    type: "debugger",
                     properties: {},
                     connections: [],
                     isTrigger: false
@@ -175,7 +175,7 @@ describe('serialize-flow enhanced deserialization', () => {
                 nodes: [{
                     id: "test",
                     name: "test",
-                    type: "debuggerNode",
+                    type: "debugger",
                     properties: {},
                     connections: ["missingTarget"],
                     isTrigger: false
@@ -251,10 +251,10 @@ describe('serialize-flow enhanced deserialization', () => {
 
             // Check that delayNode is not in startNodes (since it doesn't have start/stop methods)
             expect(serialized.startNodes).toEqual(['delay']); // Since we passed delayNode as start node
-            
+
             const delayNodeSerialized = serialized.nodes.find(n => n.name === "delay");
             expect(delayNodeSerialized?.name).toBe('delay');
-            expect(delayNodeSerialized?.type).toBe('delayNode');
+            expect(delayNodeSerialized?.type).toBe('delay');
         });
     });
 });

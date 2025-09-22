@@ -20,7 +20,7 @@ export const createWatchFileNode: TriggerNodeFactory<WatchFileNodeProps> = (name
   };
 
   const node = createNode({
-    type: "watchFileNode",
+    type: "watchFile",
     name,
     process,
     properties: { filePath }
@@ -61,4 +61,4 @@ export const createWatchFileNode: TriggerNodeFactory<WatchFileNodeProps> = (name
 
   return { ...node, start, stop, isRunning };
 };
-createWatchFileNode.nodeType = "watchFileNode";
+createWatchFileNode.nodeType = "watchFile";

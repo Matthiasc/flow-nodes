@@ -19,10 +19,10 @@ export const createRandomNumberNode: NodeFactory<RandomNumberNodeProps> = (name,
     return msg;
   };
   return createNode({
-    type: "randomNumberNode",
+    type: "randomNumber",
     name,
     process,
     properties: { wholeNumber, range }
   });
 };
-createRandomNumberNode.nodeType = "randomNumberNode";
+createRandomNumberNode.nodeType = "randomNumber";

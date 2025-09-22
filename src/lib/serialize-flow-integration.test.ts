@@ -29,17 +29,17 @@ describe('Serialization Integration Tests', () => {
 
             // Verify each node in the serialization
             const rateLimitSerialized = parsedJson.nodes.find((n: any) => n.name === 'rate-limit-1');
-            expect(rateLimitSerialized.type).toBe('rateLimitingNode');
+            expect(rateLimitSerialized.type).toBe('rateLimit');
             expect(rateLimitSerialized.properties).toEqual({ limit: 5, interval: 2000 });
             expect(rateLimitSerialized.connections).toEqual(['delay-1']);
 
             const delaySerialized = parsedJson.nodes.find((n: any) => n.name === 'delay-1');
-            expect(delaySerialized.type).toBe('delayNode');
+            expect(delaySerialized.type).toBe('delay');
             expect(delaySerialized.properties).toEqual({ delay: 500 });
             expect(delaySerialized.connections).toEqual(['debug-1']);
 
             const debugSerialized = parsedJson.nodes.find((n: any) => n.name === 'debug-1');
-            expect(debugSerialized.type).toBe('debuggerNode');
+            expect(debugSerialized.type).toBe('debugger');
             expect(debugSerialized.connections).toEqual([]);
         });
 

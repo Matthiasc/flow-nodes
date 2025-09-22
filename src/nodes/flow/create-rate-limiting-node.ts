@@ -34,10 +34,10 @@ export const createRateLimitingNode: NodeFactory<RateLimitingNodeProps> = (name,
   };
 
   return createNode({
-    type: "rateLimitingNode",
+    type: "rateLimit",
     name,
     process,
     properties: { limit, interval }
   });
 };
-createRateLimitingNode.nodeType = "rateLimitingNode";
+createRateLimitingNode.nodeType = "rateLimit";

@@ -10,10 +10,10 @@ export const createDebuggerNode: NodeFactory<DebuggerNodeProps> = (name, props =
     return msg;
   };
   return createNode({
-    type: "debuggerNode",
+    type: "debugger",
     name,
     process,
     properties: {}
   });
 };
-createDebuggerNode.nodeType = "debuggerNode";
+createDebuggerNode.nodeType = "debugger";
