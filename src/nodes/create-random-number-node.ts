@@ -25,3 +25,4 @@ export const createRandomNumberNode: NodeFactory<RandomNumberNodeProps> = (name,
     properties: { wholeNumber, range }
   });
 };
+createRandomNumberNode.nodeType = "randomNumberNode";

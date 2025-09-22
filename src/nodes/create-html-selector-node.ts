@@ -51,3 +51,4 @@ export const createHtmlSelectorNode: NodeFactory<HtmlSelectorNodeProps> = (name,
     properties: { selector }
   });
 };
+createHtmlSelectorNode.nodeType = "selectorNode";

@@ -31,6 +31,7 @@ const createCalculatorNode = (name: string, properties?: { operation: string; va
         }
     });
 };
+createCalculatorNode.nodeType = "calculatorNode";
 
 // Custom formatter node  
 const createFormatterNode = (name: string, properties?: { format: string }) => {
@@ -54,6 +55,7 @@ const createFormatterNode = (name: string, properties?: { format: string }) => {
         }
     });
 };
+createFormatterNode.nodeType = "formatterNode";
 
 // ===== Example Usage =====
 
@@ -83,10 +85,10 @@ try {
 
 // 4. Deserialize WITH custom factories (will work)
 console.log("3. Deserializing WITH custom factories...");
-const customFactories = {
-    calculatorNode: createCalculatorNode,
-    formatterNode: createFormatterNode
-};
+const customFactories = [
+    createCalculatorNode,
+    createFormatterNode
+];
 
 try {
     const { triggerNodes, allNodes, getNode } = deserializeNodes(flowJson, customFactories);

@@ -13,67 +13,52 @@ export const createWatchFileNode: TriggerNodeFactory<WatchFileNodeProps> = (name
   }
 
   const { filePath } = props;
+  let watcher: any = null;
 
-  const process: ProcessFn = async ({ msg, log, globals }) => msg; //just pass the message through
+  const process: ProcessFn = async ({ msg, log, globals }) => {
+    return msg;
+  };
 
-  const n = createNode({
+  const node = createNode({
     type: "watchFileNode",
     name,
     process,
     properties: { filePath }
   });
 
-  let watcher: any = null;
-  let isWatching = false;
+  const start = () => {
+    if (watcher) return;
 
-  function start() {
-    if (!isWatching) {
-      watcher = chokidar.watch(filePath, {
-        persistent: true,
-        ignoreInitial: true,
+    watcher = chokidar.watch(filePath, {
+      persistent: true
+    });
+
+    watcher.on('change', (changedPath: string) => {
+      console.log(`File ${changedPath} changed`);
+      node.process({
+        msg: {
+          payload: {
+            eventType: 'change',
+            filename: path.basename(changedPath),
+            filePath: changedPath,
+            timestamp: Date.now()
+          }
+        }
       });
+    });
+  };
 
-      watcher
-        .on("all", async (eventType: string, fileName: string) => {
-          if (!fileName) {
-            n.log.warn("fileName not provided in event");
-            return;
-          }
-
-          try {
-            const fileSize = await stat(filePath);
-
-            n.process({
-              msg: {
-                payload: filePath,
-                fileName,
-                filePath,
-                fileSize,
-                eventType,
-              },
-            });
-          } catch (error) {
-            n.log.error(`Error handling file change: ${error}`);
-          }
-        })
-        .on("error", (error: any) => {
-          n.log.error(`Watcher error: ${error}`);
-        });
-
-      isWatching = true;
-    }
-  }
-
-  function stop() {
-    if (isWatching && watcher) {
+  const stop = () => {
+    if (watcher) {
       watcher.close();
       watcher = null;
-      isWatching = false;
     }
-  }
+  };
 
-  // All triggers start stopped - use flow control to start
-  // start() must be called explicitly
+  const isRunning = () => {
+    return watcher !== null;
+  };
 
-  return { ...n, start, stop, isRunning: () => isWatching } as TriggerNode;
+  return { ...node, start, stop, isRunning };
 };
+createWatchFileNode.nodeType = "watchFileNode";

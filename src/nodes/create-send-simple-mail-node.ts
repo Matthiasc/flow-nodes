@@ -69,3 +69,4 @@ export const createSendSimpleMailNode: NodeFactory<SendSimpleMailNodeProps> = (n
 
   return createNode({ type: "sendMailNode", name, process });
 };
+createSendSimpleMailNode.nodeType = "sendMailNode";

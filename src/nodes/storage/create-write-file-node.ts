@@ -35,3 +35,4 @@ export const createWriteFileNode: NodeFactory<WriteFileNodeProps> = (name, props
 
   return createNode({ type: "writeToFileNode", name, process });
 };
+createWriteFileNode.nodeType = "writeToFileNode";

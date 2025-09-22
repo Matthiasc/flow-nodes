@@ -29,3 +29,4 @@ export const createBatchNode: NodeFactory<BatchNodeProps> = (name, props = {}) =
     properties: { numberOfMessages }
   });
 };
+createBatchNode.nodeType = "batchNode";

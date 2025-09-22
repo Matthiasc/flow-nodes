@@ -15,3 +15,4 @@ export const createPassThroughNode: NodeFactory<PassThroughNodeProps> = (name, p
     properties: {}
   });
 };
+createPassThroughNode.nodeType = "passThroughNode";

@@ -40,3 +40,4 @@ export const createRateLimitingNode: NodeFactory<RateLimitingNodeProps> = (name,
     properties: { limit, interval }
   });
 };
+createRateLimitingNode.nodeType = "rateLimitingNode";

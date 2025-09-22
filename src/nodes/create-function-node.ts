@@ -20,3 +20,4 @@ export const createFunctionNode: NodeFactory<FunctionNodeProps> = (name, props) 
   };
   return createNode({ type: "functionNode", name, process });
 };
+createFunctionNode.nodeType = "functionNode";

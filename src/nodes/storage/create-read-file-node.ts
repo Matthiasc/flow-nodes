@@ -32,3 +32,4 @@ export const createReadFileNode: NodeFactory<ReadFileNodeProps> = (name, props =
     properties: { filePath, encoding }
   });
 };
+createReadFileNode.nodeType = "readFileNode";

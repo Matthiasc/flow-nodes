@@ -132,7 +132,7 @@ export const serializeNodes = (nodes: Node[]): string => {
  * @returns Object containing trigger nodes, all nodes, and flow control methods
  */
 export const deserializeNodes = (
-    jsonString: string, 
+    jsonString: string,
     customFactories: NodeFactory[] = []
 ): DeserializedFlow => {
     const serializedFlow: SerializedFlow = JSON.parse(jsonString);
@@ -166,42 +166,40 @@ const isTriggerNode = (node: Node): boolean => {
 };
 
 /**
- * Helper function to auto-discover node types by creating temporary nodes
+ * Builds a map of node types to their factory functions using static nodeType properties
  * Includes duplicate detection and handling
  */
 const buildFactoryMap = (factories: NodeFactory[]): Record<string, NodeFactory> => {
     const factoryMap: Record<string, NodeFactory> = {};
     const typeToFactoryName: Record<string, string> = {};
-    
+
     factories.forEach(factory => {
-        try {
-            // Create a temporary node to discover its type
-            const tempNode = factory('__temp__', {});
-            const nodeType = tempNode.type;
-            
-            // Check for duplicate types
-            if (factoryMap[nodeType]) {
-                const existingFactoryName = typeToFactoryName[nodeType];
-                const currentFactoryName = factory.name || 'anonymous';
-                
-                console.warn(
-                    `Duplicate node type "${nodeType}" detected:\n` +
-                    `  - Existing factory: ${existingFactoryName}\n` +
-                    `  - New factory: ${currentFactoryName}\n` +
-                    `  - Using the new factory (${currentFactoryName}) - it will override the existing one`
-                );
-            }
-            
-            // Store the factory (later ones override earlier ones)
-            factoryMap[nodeType] = factory;
-            typeToFactoryName[nodeType] = factory.name || 'anonymous';
-            
-        } catch (error) {
+        // Use static nodeType property - much safer than instantiation
+        const nodeType = factory.nodeType;
+
+        if (!nodeType) {
             const factoryName = factory.name || 'anonymous';
-            console.warn(`Failed to auto-discover node type for factory "${factoryName}":`, error);
+            throw new Error(`Factory "${factoryName}" missing nodeType property. Add: ${factoryName}.nodeType = "your-type-name"`);
         }
+
+        // Check for duplicate types
+        if (factoryMap[nodeType]) {
+            const existingFactoryName = typeToFactoryName[nodeType];
+            const currentFactoryName = factory.name || 'anonymous';
+
+            console.warn(
+                `Duplicate node type "${nodeType}" detected:\n` +
+                `  - Existing factory: ${existingFactoryName}\n` +
+                `  - New factory: ${currentFactoryName}\n` +
+                `  - Using the new factory (${currentFactoryName}) - it will override the existing one`
+            );
+        }
+
+        // Store the factory (later ones override earlier ones)
+        factoryMap[nodeType] = factory;
+        typeToFactoryName[nodeType] = factory.name || 'anonymous';
     });
-    
+
     return factoryMap;
 };
 
@@ -212,15 +210,15 @@ const buildFactoryMap = (factories: NodeFactory[]): Record<string, NodeFactory> 
  * @returns Object containing trigger nodes, all nodes, and flow control methods
  */
 export const deserializeFlow = (
-    serializedFlow: SerializedFlow, 
+    serializedFlow: SerializedFlow,
     customFactories: NodeFactory[] = []
 ): DeserializedFlow => {
     const nodeMap = new Map<string, Node>();
-    
+
     // Combine built-in and custom factories, then auto-discover their types
     const allFactories = [...builtInFactories, ...customFactories];
     const factoryMap = buildFactoryMap(allFactories);
-    
+
     // First pass: create all nodes
     serializedFlow.nodes.forEach(serializedNode => {
         const factory = factoryMap[serializedNode.type];

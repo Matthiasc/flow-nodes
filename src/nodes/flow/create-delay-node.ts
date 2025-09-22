@@ -8,8 +8,11 @@ export const createDelayNode: NodeFactory<DelayNodeProps> = (name, props = {}) =
   const { delay = 1000 } = props;
 
   const process: ProcessFn = async ({ msg, log, globals }) => {
-    await new Promise((resolve) => setTimeout(resolve, delay));
-    // msg.payload = payload;
+    log.info(`Delaying message for ${delay}ms`);
+
+    await new Promise(resolve => setTimeout(resolve, delay));
+
+    log.info(`Delay completed, forwarding message`);
     return msg;
   };
 
@@ -20,3 +23,4 @@ export const createDelayNode: NodeFactory<DelayNodeProps> = (name, props = {}) =
     properties: { delay }
   });
 };
+createDelayNode.nodeType = "delayNode";

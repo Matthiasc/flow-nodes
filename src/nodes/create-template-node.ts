@@ -29,3 +29,4 @@ export const createTemplateNode: NodeFactory<TemplateNodeProps> = (name, props =
     properties: { template }
   });
 };
+createTemplateNode.nodeType = "templateNode";

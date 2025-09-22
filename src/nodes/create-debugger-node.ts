@@ -16,3 +16,4 @@ export const createDebuggerNode: NodeFactory<DebuggerNodeProps> = (name, props =
     properties: {}
   });
 };
+createDebuggerNode.nodeType = "debuggerNode";

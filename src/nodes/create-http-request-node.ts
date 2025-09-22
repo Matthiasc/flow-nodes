@@ -7,31 +7,36 @@ export type HttpRequestNodeProps = {
 
 export const createHttpRequestNode: NodeFactory<HttpRequestNodeProps> = (name, props = {}) => {
   const { url, onProcessed } = props;
-  const process: ProcessFn = async ({ msg, log, globals }) => {
-    // @ts-ignore
-    const _url = url || msg.url;
 
-    if (!_url) {
-      throw new Error("No URL provided");
+  const process: ProcessFn = async ({ msg, log, globals }) => {
+    const requestUrl = url || msg.payload?.url || msg.payload;
+
+    if (!requestUrl) {
+      throw new Error("HTTP request node requires a URL");
     }
 
     try {
-      const response = await fetch(_url);
+      const response = await fetch(requestUrl);
       const data = await response.text();
+
       msg.payload = data;
-      log.info(`Fetched data from: ${_url}`);
-      return msg; // Return fetched data
+      log.info(`HTTP GET request to ${requestUrl} completed with status ${response.status}`);
+
+      if (onProcessed) {
+        onProcessed(msg);
+      }
     } catch (error: any) {
-      log.error(`Failed to fetch data from ${_url}: ${error.message}`);
-      throw new Error(`Failed to fetch data from ${_url}: ${error.message}`);
+      throw new Error(`HTTP request failed: ${error.message}`);
     }
+
+    return msg;
   };
 
   return createNode({
-    type: "fetchNode",
+    type: "httpRequestNode",
     name,
     process,
-    onProcessed,
-    properties: { url }
+    properties: { url, onProcessed }
   });
 };
+createHttpRequestNode.nodeType = "httpRequestNode";
