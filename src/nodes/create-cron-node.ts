@@ -12,57 +12,56 @@ export type CronNodeProps = {
     cronTime: string;
 };
 
-export const createCronNode: TriggerNodeFactory<CronNodeProps> = Object.assign(
-    (name: string, props: CronNodeProps = { cronTime: '* * * * * *' }) => {
-        const { cronTime } = props;
+export const createCronNode: TriggerNodeFactory<CronNodeProps> = (name: string, props: CronNodeProps = { cronTime: '* * * * * *' }) => {
+    const { cronTime } = props;
 
-        const process: ProcessFn = async ({ msg, log, globals }) => {
-            //just forwarding the message
-            return msg;
-        };
+    const process: ProcessFn = async ({ msg, log, globals }) => {
+        //just forwarding the message
+        return msg;
+    };
 
-        const node = createNode({
-            type: "cronNode",
-            name,
-            process,
-            properties: { cronTime }
-        })
+    const node = createNode({
+        type: "cronNode",
+        name,
+        process,
+        properties: { cronTime }
+    })
 
-        const job = CronJob.from({
-            cronTime,
-            onTick: () => {
-                console.log('Cron job triggered for node', name);
-                node.process({
-                    msg: {
-                        payload: {
-                            name,
-                            timestamp: Date.now(),
-                            // nextDate: job.nextDate()
-                        }
+    const job = CronJob.from({
+        cronTime,
+        onTick: () => {
+            console.log('Cron job triggered for node', name);
+            node.process({
+                msg: {
+                    payload: {
+                        name,
+                        timestamp: Date.now(),
+                        // nextDate: job.nextDate()
                     }
-                });
-            },
-            start: false, // Always stopped
-        });
+                }
+            });
+        },
+        start: false, // Always stopped
+    });
 
-        // console.log(job)
-        function start() {
-            // if (!job.isActive) {
-            job.start();
-            // }
-        }
+    // console.log(job)
+    function start() {
+        // if (!job.isActive) {
+        job.start();
+        // }
+    }
 
-        function stop() {
-            // if (job.isActive) {
-            job.stop();
-            // }
-        }
+    function stop() {
+        // if (job.isActive) {
+        job.stop();
+        // }
+    }
 
-        function isRunning() {
-            return job.isActive;
-        }
+    function isRunning() {
+        return job.isActive;
+    }
 
-        return { ...node, start, stop, isRunning } as TriggerNode;
-    },
-    { nodeType: "cronNode" }
-);
+    return { ...node, start, stop, isRunning } as TriggerNode;
+}
+
+createCronNode.nodeType = "cronNode";
