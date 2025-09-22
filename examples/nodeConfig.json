@@ -1,0 +1,54 @@
+{
+    "nodes": [
+        {
+            "id": "cronNode1",
+            "name": "cronNode1",
+            "type": "cronNode",
+            "properties": {
+                "cronTime": "*/5 * * * * *"
+            },
+            "connections": [
+                "readFileNode1"
+            ],
+            "isTrigger": true
+        },
+        {
+            "id": "readFileNode1",
+            "name": "readFileNode1",
+            "type": "readFileNode",
+            "properties": {
+                "filePath": "./test.txt",
+                "encoding": "utf-8"
+            },
+            "connections": [
+                "mailNode1"
+            ],
+            "isTrigger": false
+        },
+        {
+            "id": "mailNode1",
+            "name": "mailNode1",
+            "type": "sendMailNode",
+            "properties": {
+                "smtpConfig": {
+                    "service": "gmail",
+                    "auth": {
+                        "user": "{{GOOGLE_ACCOUNT_USERNAME}}",
+                        "pass": "{{GOOGLE_APP_PASSWORD}}"
+                    }
+                },
+                "mailOptions": {
+                    "from": "matthias.crommelinck+test@gmail.com",
+                    "to": "matthias.crommelinck@gmail.com",
+                    "subject": "Test Email",
+                    "message": "This is a test email."
+                }
+            },
+            "connections": [],
+            "isTrigger": false
+        }
+    ],
+    "startNodes": [
+        "cronNode1"
+    ]
+}

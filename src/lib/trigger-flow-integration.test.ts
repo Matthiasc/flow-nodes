@@ -118,7 +118,9 @@ describe('Trigger Flow Integration Tests', () => {
             const cronSerialized = parsed.nodes.find((n: any) => n.name === 'test-cron');
             expect(cronSerialized.type).toBe('cronNode');
             expect(cronSerialized.properties.cronTime).toBe('0 */10 * * * *');
-            expect(cronSerialized.isTrigger).toBe(true);
+            
+            // Verify cron node is in startNodes (trigger detection)
+            expect(parsed.startNodes).toContain('test-cron');
 
             // Deserialize and verify
             const { triggerNodes } = deserializeNodes(serialized);
@@ -137,14 +139,17 @@ describe('Trigger Flow Integration Tests', () => {
             const serialized = serializeNodes([cronNode]);
             const parsed = JSON.parse(serialized);
 
-            // Check trigger flags in serialized data
+            // Check trigger detection in serialized data via startNodes
+            expect(parsed.startNodes).toEqual(['cron']); // Only cron should be a trigger
+            
             const cronSerialized = parsed.nodes.find((n: any) => n.name === 'cron');
             const delaySerialized = parsed.nodes.find((n: any) => n.name === 'delay');
             const debugSerialized = parsed.nodes.find((n: any) => n.name === 'debug');
-
-            expect(cronSerialized.isTrigger).toBe(true);
-            expect(delaySerialized.isTrigger).toBe(false);
-            expect(debugSerialized.isTrigger).toBe(false);
+            
+            // Verify all nodes exist
+            expect(cronSerialized).toBeDefined();
+            expect(delaySerialized).toBeDefined();
+            expect(debugSerialized).toBeDefined();
 
             // Verify deserialization identifies triggers correctly
             const { triggerNodes, allNodes } = deserializeNodes(serialized);

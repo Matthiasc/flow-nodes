@@ -9,7 +9,7 @@ export type ReadFileNodeProps = {
 export const createReadFileNode: NodeFactory<ReadFileNodeProps> = (name, props = {}) => {
   let { filePath, encoding = "utf-8" } = props;
   const process: ProcessFn = async ({ msg, log, globals }) => {
-    filePath = msg.payload || filePath;
+    filePath = msg.filePath || filePath;
     if (!filePath) throw new Error("No filePath provided");
 
     encoding = msg.encoding || encoding || "utf-8";

@@ -27,12 +27,8 @@ export const createSendSimpleMailNode: NodeFactory<SendSimpleMailNodeProps> = (n
     throw new Error('Send simple mail node requires smtpConfig property');
   }
 
-  // Keep original props for serialization
-  const originalProps = props;
-
   // Inject environment variables for runtime use
-  const processedProps = injectEnvVariables(props);
-  const { smtpConfig, mailOptions } = processedProps;
+  const { smtpConfig, mailOptions } = injectEnvVariables(props);
 
   const transporter = nodemailer.createTransport(smtpConfig);
 
@@ -78,7 +74,7 @@ export const createSendSimpleMailNode: NodeFactory<SendSimpleMailNodeProps> = (n
     type: "sendMailNode",
     name,
     process,
-    properties: originalProps // Keep original props with templates for serialization
+    properties: props // Keep original props with templates for serialization
   });
 };
 createSendSimpleMailNode.nodeType = "sendMailNode";

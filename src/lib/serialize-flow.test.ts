@@ -15,12 +15,10 @@ describe('serialize-flow', () => {
 
             expect(result).toEqual({
                 nodes: [{
-                    id: "test-delay",
                     name: "test-delay",
                     type: "delayNode",
                     properties: { delay: 500 },
-                    connections: [],
-                    isTrigger: false
+                    connections: []
                 }],
                 startNodes: ["test-delay"]
             });
@@ -41,21 +39,17 @@ describe('serialize-flow', () => {
             const debugNodeSerialized = result.nodes.find(n => n.name === "debug");
 
             expect(delayNodeSerialized).toEqual({
-                id: "delay",
                 name: "delay",
                 type: "delayNode",
                 properties: { delay: 1000 },
-                connections: ["debug"],
-                isTrigger: false
+                connections: ["debug"]
             });
 
             expect(debugNodeSerialized).toEqual({
-                id: "debug",
                 name: "debug",
                 type: "debuggerNode",
                 properties: {},
-                connections: [],
-                isTrigger: false
+                connections: []
             });
         });
 
@@ -160,7 +154,6 @@ describe('serialize-flow', () => {
         it('should convert SerializedFlow to formatted JSON string', () => {
             const flow = {
                 nodes: [{
-                    id: "test",
                     name: "test",
                     type: "testNode",
                     properties: { prop: "value" },

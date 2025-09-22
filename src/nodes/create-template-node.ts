@@ -7,8 +7,12 @@ export type TemplateNodeProps = {
 };
 
 export const createTemplateNode: NodeFactory<TemplateNodeProps> = (name, props = {}) => {
-  const { template = "test template <%= msg.payload %>" } = props;
+  let { template = "test template <%= msg.payload %>" } = props;
+
   const process: ProcessFn = async ({ msg, log, globals }) => {
+
+    template = msg.template || template;
+
     try {
       msg.payload = await ejs.render(
         template,

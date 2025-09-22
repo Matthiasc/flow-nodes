@@ -16,12 +16,10 @@ import { createTemplateNode } from "../nodes/create-template-node.ts";
 import { createCronNode } from "../nodes/create-cron-node.ts";
 
 export interface SerializedNode {
-    id: string;
     name: string;
     type: string;
     properties: Record<string, any>;
     connections: string[];
-    isTrigger?: boolean;
 }
 
 export interface SerializedFlow {
@@ -78,24 +76,24 @@ export const serializeFlow = (nodes: Node[]): SerializedFlow => {
         const connectedChildren = node.children();
         const connections = connectedChildren.map((child: any) => child.name);
         const properties = extractNodeProperties(node);
-        const isTrigger = isTriggerNode(node);
 
         const serializedNode: SerializedNode = {
-            id: node.name,
             name: node.name,
             type: node.type,
             properties,
-            connections,
-            isTrigger
+            connections
         };
 
         serializedNodes.push(serializedNode);
     });
 
     // Find trigger nodes (nodes that have start/stop methods)
-    const triggerNodeNames = serializedNodes
-        .filter(node => node.isTrigger)
-        .map(node => node.name);
+    const triggerNodeNames: string[] = [];
+    allNodes.forEach(node => {
+        if (isTriggerNode(node)) {
+            triggerNodeNames.push(node.name);
+        }
+    });
 
     // If no trigger nodes found, treat first provided node as start node (backward compatibility)
     const startNodes = triggerNodeNames.length > 0 ? triggerNodeNames : [nodes[0].name];
