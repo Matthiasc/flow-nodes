@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { createNode, type ProcessFn, type NodeFactory } from "../lib/create-node.ts";
+import { injectEnvVariables } from "../lib/inject-env-variables.ts";
 import { } from "nodemailer";
 
 type MailOptions = {
@@ -26,7 +27,13 @@ export const createSendSimpleMailNode: NodeFactory<SendSimpleMailNodeProps> = (n
     throw new Error('Send simple mail node requires smtpConfig property');
   }
 
-  const { smtpConfig, mailOptions } = props;
+  // Keep original props for serialization
+  const originalProps = props;
+
+  // Inject environment variables for runtime use
+  const processedProps = injectEnvVariables(props);
+  const { smtpConfig, mailOptions } = processedProps;
+
   const transporter = nodemailer.createTransport(smtpConfig);
 
   const process: ProcessFn = async ({ msg, log }) => {
@@ -67,6 +74,11 @@ export const createSendSimpleMailNode: NodeFactory<SendSimpleMailNodeProps> = (n
     }
   };
 
-  return createNode({ type: "sendMailNode", name, process });
+  return createNode({
+    type: "sendMailNode",
+    name,
+    process,
+    properties: originalProps // Keep original props with templates for serialization
+  });
 };
 createSendSimpleMailNode.nodeType = "sendMailNode";
