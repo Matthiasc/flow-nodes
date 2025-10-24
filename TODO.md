@@ -1,1 +1,0 @@
-- inspired by https://noflojs.org/documentation/components/#component-api
