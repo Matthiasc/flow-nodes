@@ -3,12 +3,15 @@ import { ref, computed } from 'vue';
 import { RouterLink, RouterView } from 'vue-router'
 import { useNodeTypesStore } from './stores/nodeTypes.store';
 import { useNodesStore } from './stores/nodes.store';
+import { useWorkflowStore } from './stores/workflow.store';
 // const nodesStore = useNodesStore();
+const workflowStore = useWorkflowStore();
 const nodeTypesStore = useNodeTypesStore();
-const allLoaded = computed(() => nodeTypesStore.isLoaded);
+const allLoaded = computed(() => nodeTypesStore.isLoaded && workflowStore.isLoaded);
 
 // Load data on app initialization
 nodeTypesStore.loadTypes();
+workflowStore.getWorkflows();
 
 </script>
 
@@ -19,7 +22,8 @@ nodeTypesStore.loadTypes();
     <header>
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/workflow/444">Workflow</RouterLink>
+        <!-- <RouterLink to="/about">About</RouterLink> -->
       </nav>
     </header>
 

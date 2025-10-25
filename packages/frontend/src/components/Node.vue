@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'node-mousedown', node: any, event: MouseEvent): void;
+    (e: 'connection-mousedown', node: any, input: string, event: MouseEvent): void;
 }>();
 
 const nodesStore = useNodesStore();
@@ -32,11 +33,14 @@ function onNodeMouseDown(node: any, event: MouseEvent) {
             </div>
 
             <div class="inputs">
-                <div class="input"></div>
+                <div class="input"
+                    @mousedown="(event: MouseEvent) => emit('connection-mousedown', node, 'input1', event)"></div>
             </div>
             <div class="outputs">
-                <div class="output"></div>
-                <div class="output"></div>
+                <div class="output"
+                    @mousedown="(event: MouseEvent) => emit('connection-mousedown', node, 'output1', event)"></div>
+                <div class="output"
+                    @mousedown="(event: MouseEvent) => emit('connection-mousedown', node, 'output2', event)"></div>
             </div>
         </div>
 
@@ -91,20 +95,29 @@ function onNodeMouseDown(node: any, event: MouseEvent) {
     margin-bottom: 8px; */
 }
 
+.inputs,
 .outputs {
     position: absolute;
-    right: 1px;
-    top: 50%;
+    right: calc(-1 * var(--connection-size) / 2 + 1px);
+    top: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
     gap: calc(var(--connection-size) / 2);
     justify-content: center;
     align-items: center;
-    transform: translate(50%, -50%);
+    /* transform: translateX(50%); */
     pointer-events: none;
 
 }
 
+.inputs {
+    left: calc(-1 * var(--connection-size) / 2 + 1px);
+    right: auto;
+    /* transform: translateX(-50%); */
+}
+
+.input,
 .output {
     background-color: #666;
     border-radius: 999px;
@@ -114,6 +127,8 @@ function onNodeMouseDown(node: any, event: MouseEvent) {
     pointer-events: all;
 }
 
+
+.input:hover,
 .output:hover {
     background-color: #409eff;
 }

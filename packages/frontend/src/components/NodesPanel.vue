@@ -30,7 +30,7 @@ const availableNodes = ref([
 <style scoped>
 .nodes-panel {
     padding: 16px;
-    background: #f9f9f9;
+    /* background: #f9f9f9; */
     border-right: 1px solid #ddd;
     height: 100%;
     overflow-y: auto;
