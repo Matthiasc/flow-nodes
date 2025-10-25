@@ -1,16 +1,23 @@
 <script setup lang="ts">
+import { useUiStore } from '@/stores/ui.store';
 import { useNodesStore } from '../stores/nodes.store';
 
 const nodesStore = useNodesStore();
+const uiStore = useUiStore();
+
 </script>
 
 <template>
   <div class="canvas-toolbar">
-    <button @click="nodesStore.addNode()" class="add-node-btn">
+    <button @click="nodesStore.addNode('hello')" class="add-node-btn">
       Add Node
     </button>
     <button @click="nodesStore.clearNodes()" class="clear-nodes-btn">
       Clear All
+    </button>
+
+    <button @click="uiStore.togglePanels()" class="clear-nodes-btn">
+      Toggle Panels
     </button>
     <span class="node-count">Nodes: {{ nodesStore.nodeCount }}</span>
   </div>

@@ -4,6 +4,7 @@ import PropertyPanel from '../components/PropertyPanel.vue';
 import NodesPanel from '../components/NodesPanel.vue';
 import Toolbar from '../components/Toolbar.vue';
 import { useNodesStore } from '../stores/nodes.store';
+import Panels from '@/components/Panels.vue';
 
 const nodesStore = useNodesStore();
 </script>
@@ -11,11 +12,25 @@ const nodesStore = useNodesStore();
 <template>
   <main>
     <Toolbar />
-    <div class="pannels">
-      <PropertyPanel :selectedNode="nodesStore.nodes.find(node => node.id === nodesStore.selectedNodeId)" />
-      <Viewport />
-      <NodesPanel />
-    </div>
+    <Panels>
+
+      <template v-slot:left>
+        <PropertyPanel :selectedNode="nodesStore.nodes.find(node => node.id === nodesStore.selectedNodeId)" />
+      </template>
+
+      <template v-slot:main>
+        <Viewport />
+      </template>
+
+      <template v-slot:bottom>
+        <div>bottom</div>
+        <!-- Bottom panel content can go here -->
+      </template>
+
+      <template v-slot:right>
+        <NodesPanel />
+      </template>
+    </Panels>
   </main>
 </template>
 

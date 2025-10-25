@@ -1,34 +1,22 @@
-import { ref, computed } from 'vue'
+import { ref, computed, readonly } from 'vue'
 import { defineStore } from 'pinia'
-import { useConfigStore } from './settings.store'
+import { getNodeTypes, type NodeType } from '../services/api'
 
-
-
-export interface NodeType {
-    id: string,
-    description?: string,
-    name: string,
-}
-
-export const useNodesStore = defineStore('nodes', () => {
-    const config = useConfigStore();
-
+export const useNodeTypesStore = defineStore('nodesTypes', () => {
     const nodeTypes = ref<NodeType[]>([])
+    const isLoaded = ref(false)
 
-    async function loadTypes() {
-        // Simulate an API call to fetch node types
-        return new Promise<void>((resolve) => {
-            setTimeout(() => {
-                nodeTypes.value = [
-                    { id: 'test-node', description: 'test node', name: 'test node' },
-                    { id: 'test-node-2', description: 'test node 2', name: 'test node 2' },
-                ]
-                resolve()
-            }, 1000)
-        })
+    async function init() {
+        if (isLoaded.value) return
+
+        const data = await getNodeTypes()
+        nodeTypes.value = data
+        isLoaded.value = true;
     }
 
     return {
-        loadTypes
+        nodeTypes: readonly(nodeTypes),
+        isLoaded: readonly(isLoaded),
+        loadTypes: init
     }
 })

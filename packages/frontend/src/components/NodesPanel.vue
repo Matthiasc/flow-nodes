@@ -16,9 +16,11 @@ const availableNodes = ref([
     <div class="nodes-panel">
         <h3>Available Nodes</h3>
         <ul>
-            <li v-for="node in availableNodes" :key="node.id" class="node-item">
-                <span>{{ node.title }}</span>
-                <p>{{ node.description }}</p>
+            <li v-for="node in availableNodes" :key="node.type">
+                <div>
+                    <div>{{ node.title }}</div>
+                    <div>{{ node.description }}</div>
+                </div>
                 <button @click="nodes.addNode(node.type)">Add</button>
             </li>
         </ul>
@@ -34,13 +36,19 @@ const availableNodes = ref([
     overflow-y: auto;
 }
 
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
 .nodes-panel h3 {
     margin: 0 0 16px;
     font-size: 18px;
     color: #333;
 }
 
-.node-item {
+li {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -51,7 +59,7 @@ const availableNodes = ref([
     background: #fff;
 }
 
-.node-item button {
+li button {
     padding: 4px 8px;
     background: #409eff;
     color: white;
@@ -60,7 +68,7 @@ const availableNodes = ref([
     cursor: pointer;
 }
 
-.node-item button:hover {
+li button:hover {
     background: #337ab7;
 }
 </style>

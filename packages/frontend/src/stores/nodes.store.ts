@@ -1,8 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { useConfigStore } from './settings.store'
-
-
+import { useSettingsStore } from './settings.store'
 
 export interface NodeData {
     id: string
@@ -13,7 +11,7 @@ export interface NodeData {
 }
 
 export const useNodesStore = defineStore('nodes', () => {
-    const config = useConfigStore();
+    const config = useSettingsStore();
 
     const nodes = ref<NodeData[]>([])
     const nextNodeId = ref(1)
@@ -47,8 +45,6 @@ export const useNodesStore = defineStore('nodes', () => {
         node.x = x < 0 ? 0 : x
         node.y = y < 0 ? 0 : y
     }
-
-
 
     function updateNode(nodeId: string, updatedProperties: Partial<NodeData>) {
         const node = nodes.value.find(node => node.id === nodeId)
@@ -93,7 +89,6 @@ export const useNodesStore = defineStore('nodes', () => {
         addNode,
         removeNode,
         updateNodePosition,
-        // updateNodeTitle,
         updateNode,
         getNodeById,
         clearNodes,

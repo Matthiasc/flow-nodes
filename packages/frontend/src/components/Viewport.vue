@@ -58,7 +58,7 @@ function handleNodeMouseDown(node: any, event: MouseEvent) {
         left: node.x + 'px',
         top: node.y + 'px',
         cursor: 'move'
-      }" @mousedown="(event: MouseEvent) => handleNodeMouseDown(node, event)" />
+      }" @node-mousedown="handleNodeMouseDown" />
     </div>
   </div>
 </template>
