@@ -1,27 +1,33 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useConfigStore } from './settings.store'
+
+
 
 export interface NodeData {
     id: string
-    title: string
+    label: string
+    type: string
     x: number
     y: number
-    content?: string
 }
 
 export const useNodesStore = defineStore('nodes', () => {
+    const config = useConfigStore();
+
     const nodes = ref<NodeData[]>([])
     const nextNodeId = ref(1)
+    const selectedNodeId = ref<string | null>(null)
 
     const nodeCount = computed(() => nodes.value.length)
 
-    function addNode(x: number = 100, y: number = 100, title: string = 'New Node') {
+    function addNode(type: string, x: number = 100, y: number = 100,) {
         const newNode: NodeData = {
-            id: `node-${nextNodeId.value}`,
-            title,
+            id: nextNodeId.value.toString(),
+            type,
+            label: "label node",
             x,
             y,
-            content: ''
         }
         nodes.value.push(newNode)
         nextNodeId.value++
@@ -43,10 +49,11 @@ export const useNodesStore = defineStore('nodes', () => {
     }
 
 
-    function updateNodeTitle(nodeId: string, title: string) {
+
+    function updateNode(nodeId: string, updatedProperties: Partial<NodeData>) {
         const node = nodes.value.find(node => node.id === nodeId)
         if (node) {
-            node.title = title
+            Object.assign(node, updatedProperties)
         }
     }
 
@@ -62,18 +69,32 @@ export const useNodesStore = defineStore('nodes', () => {
     function snapNodeToGrid(nodeId: string) {
         const node = nodes.value.find(node => node.id === nodeId)
         if (!node) return;
-        node.x = Math.round(node.x / 20) * 20
-        node.y = Math.round(node.y / 20) * 20
+        node.x = Math.round(node.x / config.gridSize) * config.gridSize
+        node.y = Math.round(node.y / config.gridSize) * config.gridSize
 
+    }
+
+    function selectNode(nodeId: string) {
+        const node = nodes.value.find(node => node.id === nodeId)
+        if (!node) return;
+        selectedNodeId.value = nodeId
+    }
+
+    function deSelectNode() {
+        selectedNodeId.value = null
     }
 
     return {
         nodes,
+        selectedNodeId,
         nodeCount,
+        selectNode,
+        deSelectNode,
         addNode,
         removeNode,
         updateNodePosition,
-        updateNodeTitle,
+        // updateNodeTitle,
+        updateNode,
         getNodeById,
         clearNodes,
         snapNodeToGrid

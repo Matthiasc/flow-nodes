@@ -1,0 +1,25 @@
+{
+    "name": "flow-nodes-monorepo",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "packageManager": "pnpm@10.18.3",
+    "engines": {
+        "node": "^20.19.0 || >=22.12.0",
+        "pnpm": ">=8.0.0"
+    },
+    "scripts": {
+        "dev": "pnpm --filter frontend dev",
+        "build": "pnpm --filter frontend build",
+        "preview": "pnpm --filter frontend preview",
+        "test": "pnpm --filter frontend test:unit",
+        "type-check": "pnpm --filter frontend type-check",
+        "dev:frontend": "pnpm --filter frontend dev",
+        "build:frontend": "pnpm --filter frontend build",
+        "clean": "pnpm -r exec rm -rf node_modules && rm -rf node_modules",
+        "install:all": "pnpm install"
+    },
+    "devDependencies": {
+        "typescript": "~5.9.0"
+    }
+}
