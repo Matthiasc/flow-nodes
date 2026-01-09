@@ -1,19 +1,6 @@
-# Flow-Nodes 🚀
+# Flow-Nodes 
 
-A powerful, type-safe flow-based programming library for Node.js. Create complex automation workflows by connecting simple, reusable nodes. Perfect for data processing pipelines, web scraping, email automation, file operations, and scheduled tasks.
-
-## Features ✨
-
-- **🔗 Visual Flow Programming** - Connect nodes like building blocks
-- **⚡ Trigger Nodes** - Cron jobs, file watchers, and more
-- **🔐 Environment Variables** - Secure credential injection with `{{VARIABLE}}` syntax  
-- **💾 Serialization** - Save/load flows as JSON for persistence
-- **🔄 Flow Control** - Start, stop, and manage complex workflows
-- **📦 Built-in Nodes** - HTTP requests, file operations, email, templates, and more
-- **🛠️ Custom Nodes** - Easy to extend with your own node types
-- **🎯 Type Safe** - Full TypeScript support with excellent IntelliSense
-
-## Quick Start
+An experiment that sits between node based editors and functional programming. 
 
 ### Installation
 
